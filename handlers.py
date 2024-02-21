@@ -339,7 +339,7 @@ async def add_job_seeker_time(clbck: CallbackQuery, state: FSMContext):
                 await clbck.bot.send_message(t[0][1], """Назначено новое собеседование:
 для того чтобы посмотреть отправьте команду /list""")
             await clbck.message.reply(f"""Вы успешно записались на собеседование в {time} {datetime.fromordinal(int(job_seeker['date'])).day} {months[datetime.fromordinal(int(job_seeker['date'])).month-1]} {datetime.fromordinal(int(job_seeker['date'])).year}.
-Ждём вас по адресу г. Казань, ул. Спартаковская д.23, приемная 4-го этажа, при выходе из лифта. 
+Ждём вас по адресу {config.address}. 
 Ваш администратор: {job_seeker['admin'].split(' ')[1]} ({job_seeker['admin'].split(' ')[2]}). 
 До встречи!🌻""")
             await state.clear()
@@ -559,7 +559,7 @@ async def done(clbck: CallbackQuery, state: FSMContext):
     await state.update_data(time=times[int(clbck.data.split('e')[1])])
     db.change_job_seeker(v['phone'], v["date"], times[int(clbck.data.split('e')[1])])
     await state.clear()
-    await clbck.message.reply(f"Благодарю вас за ответ! 🌿\nХорошо перезаписали вас на {datetime.fromordinal(int(v['date'])).day}.{datetime.fromordinal(int(v['date'])).month}.{datetime.fromordinal(int(v['date'])).year} {times[int(clbck.data.split('e')[1])]}.\nЖдём вас по адресу г. Казань ул. Спартаковская 23, приемная 4-го этажа. \nДо встречи!🌻")
+    await clbck.message.reply(f"Благодарю вас за ответ! 🌿\nХорошо перезаписали вас на {datetime.fromordinal(int(v['date'])).day}.{datetime.fromordinal(int(v['date'])).month}.{datetime.fromordinal(int(v['date'])).year} {times[int(clbck.data.split('e')[1])]}.\nЖдём вас по адресу {config.address}. \nДо встречи!🌻")
 
 
 
@@ -576,7 +576,7 @@ async def redecline(clbck: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "accept")
 async def accept(clbck: CallbackQuery, state: FSMContext):
     await state.clear()
-    await clbck.message.reply("Отлично! Ваше время подтверждено ✅ \nЖдём вас по адресу г. Казань ул. Спартаковская 23, приемная 4-го этажа. \nДо встречи!🌻")
+    await clbck.message.reply(f"Отлично! Ваше время подтверждено ✅ \nЖдём вас по адресу {config.address}. \nДо встречи!🌻")
 
 
 
