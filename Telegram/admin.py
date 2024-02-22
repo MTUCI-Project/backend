@@ -9,9 +9,9 @@ from aiogram.types.callback_query import CallbackQuery
 from aiogram.utils.deep_linking import create_start_link
 
 import db
+import utils
 import config
-import states
-import kb
+from Telegram import states, kb
 
 
 
@@ -23,17 +23,19 @@ admin_router = Router()
 async def today_list(msg: Message):
     """Sends to the telegram all information about upcoming today interviews"""
 
-    if db.ga(msg.from_user.username):
-        js = db.get_today_js()
-        if js != []:
-            for _, v in enumerate(js):
-                mess = f"""Собеседуемый {v[1]}:
-Телефон: {v[2]}
-Вакансия: {db.get_vacancy(v[3])[0][0]}
-Время: {v[5]}"""
-                await msg.reply(text=mess)
-    else:
+    tl = utils.get_today_list(msg.from_user.username)
+    if isinstance(tl, str):
         await msg.reply(config.PERMISSION_ERROR)
+    elif tl is None:
+        await msg.reply("На сегодня собеседований нет!")
+    else:
+        for _, v in enumerate(tl):
+            await msg.reply(text=f"""
+Собеседуемый {v[0]}:
+Телефон: {v[1]}
+Вакансия: {v[2]}
+Время: {v[3]}
+""")
 
 
 
@@ -41,44 +43,41 @@ async def today_list(msg: Message):
 async def future_list(msg: Message):
     """Sends to the telegram all information about upcoming today interviews"""
 
-    if db.ga(msg.from_user.username):
-        js = db.get_future_js()
-        if js != []:
-            for _, v in enumerate(js):
-                dt = datetime.fromordinal(v[4])
-                mess = f"""Собеседуемый {v[1]}:
-Телефон: {v[2]}
-Вакансия: {db.get_vacancy(v[3])[0][0]}
-Время: {dt.day} {dt.month-1} {dt.year} в {v[5]}"""
-                await msg.reply(text=mess)
-        else:
-            await msg.reply("В ближайшем будующем собеседований нет!")
-    else:
+    fl = utils.get_future_list(msg.from_user.username)
+    if isinstance(fl, str):
         await msg.reply(config.PERMISSION_ERROR)
+    elif fl is None:
+        await msg.reply("На сегодня собеседований нет!")
+    else:
+        for _, v in enumerate(fl):
+            await msg.reply(text=f"""
+Собеседуемый {v[0]}:
+Телефон: {v[1]}
+Вакансия: {v[2]}
+Время: {v[3]} {v[4]} {v[5]} в {v[6]}
+""")
+
 
 
 @admin_router.message(StateFilter(None), Command("av"))
 async def add_vacancy(msg: Message, state: FSMContext):
     """This handler helps add vacancy from telegram"""
 
-    try:
-        if db.get_administrators():
-            if db.ga(msg.from_user.username):
-                await msg.reply(
-                    text="Введите название для вашей вакансии:",
-                )
-                await state.set_state(states.AddVacancy.name)
-            else:
-                await msg.reply(
-                    text="У вас нет прав для запуска данной команды, обратитесь к администратору!",
-                    reply_markup=kb.exit_menu
-                )
+    await state.clear()
+    if db.get_administrators():
+        if db.ga(msg.from_user.username):
+            await msg.reply(
+                text="Введите название для вашей вакансии:",
+            )
+            await state.set_state(states.AddVacancy.name)
         else:
             await msg.reply(
-                text="На данный момент незарегистрировани ни один администратор, обратитесь к тех специалисту!"
+                text="У вас нет прав для запуска данной команды, обратитесь к администратору!"
             )
-    except:
-        await msg.reply(text=config.SORRY_MESSAGE + "/av")
+    else:
+        await msg.reply(
+            text="На данный момент незарегистрировани ни один администратор, обратитесь к тех специалисту!"
+        )
 
 
 @admin_router.message(states.AddVacancy.name)
@@ -86,15 +85,12 @@ async def vacancy_name_picked(message: Message, state: FSMContext):
     """Handle name for the vacncy"""
 
     message.bot.edit_message_reply_markup(message.chat.id, message.message_id, reply_markup=None)
-    try:
-        await state.update_data(name=message.text)
-        await message.reply(
-            text="Теперь, введите ссылку на данную вакансию:",
-            reply_markup=kb.exit_menu
-        )
-        await state.set_state(states.AddVacancy.link)
-    except:
-        await message.reply(text=config.SORRY_MESSAGE + "/av")
+    await state.update_data(name=message.text)
+    await message.reply(
+        text="Теперь, введите ссылку на данную вакансию:",
+        reply_markup=kb.exit_menu
+    )
+    await state.set_state(states.AddVacancy.link)
 
 
 @admin_router.message(states.AddVacancy.link)
@@ -102,67 +98,58 @@ async def vacancy_admin(message: Message, state: FSMContext):
     """Handle vacancy link"""
 
     message.bot.edit_message_reply_markup(message.chat.id, message.message_id, reply_markup=None)
-    try:
-        await state.update_data(link=message.text)
-        y = db.get_administrators()
-        administrators = []
-        for ind,val in enumerate(y):
-            administrators.append([InlineKeyboardButton(text=val[1], callback_data=f"vad{ind}")])
-        administrators.append([InlineKeyboardButton(text="Отмена", callback_data='cancel')])
+    await state.update_data(link=message.text)
+    y = db.get_administrators()
+    administrators = []
+    for ind,val in enumerate(y):
+        administrators.append([InlineKeyboardButton(text=val[1], callback_data=f"vad{ind}")])
+    administrators.append([InlineKeyboardButton(text="Отмена", callback_data='cancel')])
 
-        adm_kb = InlineKeyboardMarkup(one_time_keyboard=True, inline_keyboard=administrators)
-        await message.reply(
-            text="Теперь, выберите админа на данную вакансию:",
-            reply_markup=adm_kb
-        )
-        await state.set_state(states.AddVacancy.admin)
-    except:
-        await message.reply(text=config.SORRY_MESSAGE + "/av")
+    adm_kb = InlineKeyboardMarkup(one_time_keyboard=True, inline_keyboard=administrators)
+    await message.reply(
+        text="Теперь, выберите админа на данную вакансию:",
+        reply_markup=adm_kb
+    )
+    await state.set_state(states.AddVacancy.admin)
 
 
 @admin_router.callback_query(F.data.startswith('vad'))
 async def vacancy_added(clbck: CallbackQuery, state: FSMContext):
     """Handle fo picked admin for the vacancy"""
 
-    try:
-        vacancy_data = await state.get_data()
-        y = db.get_administrators()
-        await state.update_data(admin=y[int(clbck.data.split("d")[1])][1])
-        db.add_vacancy(vacancy_data['name'], vacancy_data['link'], y[int(clbck.data.split("d")[1])][1])
-        await clbck.message.reply(f"Вакансия \"{vacancy_data['name']}\" успешно добавлена!")
-        await state.clear()
-    except:
-        await clbck.message.reply(text=config.SORRY_MESSAGE + "/av")
+    vacancy_data = await state.get_data()
+    y = db.get_administrators()
+    await state.update_data(admin=y[int(clbck.data.split("d")[1])][1])
+    db.add_vacancy(vacancy_data['name'], vacancy_data['link'], y[int(clbck.data.split("d")[1])][1])
+    await clbck.message.reply(f"Вакансия \"{vacancy_data['name']}\" успешно добавлена!")
+    await state.clear()
 
 
 @admin_router.message(StateFilter(None), Command("dv"))
 async def del_vacancy(msg: Message, state: FSMContext):
     """Handler for deleting vacancy"""
 
-    try:
-        if db.ga(msg.from_user.username):
-            if db.get_vacancies():
-                vacancies = []
-                y = db.get_vacancies()
-                for ind,val in enumerate(y):
-                    vacancies.append([InlineKeyboardButton(text=val[1], callback_data=f"dvac{ind}")])
+    if db.ga(msg.from_user.username):
+        if db.get_vacancies():
+            vacancies = []
+            y = db.get_vacancies()
+            for ind,val in enumerate(y):
+                vacancies.append([InlineKeyboardButton(text=val[1], callback_data=f"dvac{ind}")])
 
-                vacancies.append([InlineKeyboardButton(text="Отмена", callback_data='cancel')])
-                vac_kb = InlineKeyboardMarkup(one_time_keyboard=True, inline_keyboard=vacancies)
-                await msg.reply(
-                    text="Выберите вакансию, которую хотите удалить:",
-                    reply_markup=vac_kb
-                )
-                await state.set_state(states.DelVacancy.name)
-            else:
-                await msg.reply(
-                    text="Не нашел существующих вакансий, добавьте их командой /av",
-                )
-                state.clear()
+            vacancies.append([InlineKeyboardButton(text="Отмена", callback_data='cancel')])
+            vac_kb = InlineKeyboardMarkup(one_time_keyboard=True, inline_keyboard=vacancies)
+            await msg.reply(
+                text="Выберите вакансию, которую хотите удалить:",
+                reply_markup=vac_kb
+            )
+            await state.set_state(states.DelVacancy.name)
         else:
-            await msg.reply("У вас нет прав для запуска данной команды, обратитесь к администратору!")
-    except:
-        await msg.reply(text=config.SORRY_MESSAGE + "/dv")
+            await msg.reply(
+                text="Не нашел существующих вакансий, добавьте их командой /av",
+            )
+            state.clear()
+    else:
+        await msg.reply("У вас нет прав для запуска данной команды, обратитесь к администратору!")
 
 
 @admin_router.callback_query(F.data.startswith('dvac'))

@@ -8,9 +8,8 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types.callback_query import CallbackQuery
 from aiogram.utils.deep_linking import create_start_link, decode_payload
 
-import states
 import db
-import kb
+from Telegram import states, kb
 import config
 
 
