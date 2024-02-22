@@ -4,8 +4,8 @@ import os
 load_dotenv()
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-sorry_msg = "Извините, но я потерял контекст, пожалуйста, попробуйте ещё раз: "
-months = [
+SORRY_MESSAGE = "Извините, но я потерял контекст, пожалуйста, попробуйте ещё раз: "
+MONTHS = [
     "Января",
     "Февраля",
     "Марта",
@@ -19,6 +19,6 @@ months = [
     "Ноября", 
     "Декабря"
 ]
-interview_time = os.getenv('INTERVIEW_TIME').split(' ')
-permission_error = "У вас нет прав для запуска данной команды, обратитесь к администратору!"
-address = os.getenv('ADDRESS')
+INTERVIEW_TIME = os.getenv('INTERVIEW_TIME').split(' ')
+PERMISSION_ERROR = "У вас нет прав для запуска данной команды, обратитесь к администратору!"
+ADDRESS = os.getenv('ADDRESS')
