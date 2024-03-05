@@ -1,9 +1,9 @@
-from dotenv import load_dotenv
-import os
+import yaml
 
-load_dotenv()
+with open("config.yaml") as f:
+    conf = yaml.safe_load(f)
 
-BOT_TOKEN = os.getenv('BOT_TOKEN')
+BOT_TOKEN = conf["BOT_TOKEN"]
 SORRY_MESSAGE = "Извините, но я потерял контекст, пожалуйста, попробуйте ещё раз: "
 MONTHS = [
     "Января",
@@ -16,9 +16,11 @@ MONTHS = [
     "Августа",
     "Сентября",
     "Октября",
-    "Ноября", 
-    "Декабря"
+    "Ноября",
+    "Декабря",
 ]
-INTERVIEW_TIME = os.getenv('INTERVIEW_TIME').split(' ')
-PERMISSION_ERROR = "У вас нет прав для запуска данной команды, обратитесь к администратору!"
-ADDRESS = os.getenv('ADDRESS')
+INTERVIEW_TIME = conf["INTERVIEW_TIME"].split(" ")
+PERMISSION_ERROR = (
+    "У вас нет прав для запуска данной команды, обратитесь к администратору!"
+)
+ADDRESS = conf["ADDRESS"]
