@@ -7,10 +7,10 @@ from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from fastapi import FastAPI
 
-from Telegram.handlers import router
-from Telegram.admin import admin_router
-import db
-import config
+from backend.Telegram.handlers import router
+from backend.Telegram.admin import admin_router
+import backend.db as db
+import backend.config as config
 
 
 

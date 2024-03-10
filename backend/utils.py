@@ -1,7 +1,7 @@
 from datetime import datetime
 
-import config
-import db
+import backend.config as config
+import backend.db as db
 
 def get_today_list(username: str):
     """Return list of today interviews"""

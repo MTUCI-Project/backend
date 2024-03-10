@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-import db
+import backend.db as db
 
 
 
