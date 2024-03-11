@@ -21,8 +21,8 @@ async def main():
     dp = Dispatcher(storage=MemoryStorage())
     app = FastAPI()
 
-    dp.include_router(router)
     dp.include_router(admin_router)
+    dp.include_router(router)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 
@@ -35,7 +35,7 @@ if __name__ == "__main__":
         admin_name = input("Type admin's name (like 'Ну типо разраб'): ")
         db.init()
         db.add_admin(admin_name, admin_phone, admin_usr)
-        
+
     logging.basicConfig(level=logging.INFO)
     print("Aiogram started!")
     asyncio.run(main())

@@ -47,7 +47,7 @@ async def future_list(msg: Message):
     if isinstance(fl, str):
         await msg.reply(config.PERMISSION_ERROR)
     elif fl is None:
-        await msg.reply("На сегодня собеседований нет!")
+        await msg.reply("В ближайшем будущем собеседований нет!")
     else:
         for _, v in enumerate(fl):
             await msg.reply(text=f"""
