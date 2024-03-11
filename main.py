@@ -30,7 +30,12 @@ async def main():
 
 if __name__ == "__main__":
     if not path.isfile(curdir + "/eve.db"):
+        admin_usr = input("Type admin's username from Telegram (without \"@\" character): ")
+        admin_phone = input("Type admin's phone (like '+78005553535'): ")
+        admin_name = input("Type admin's name (like 'Ну типо разраб'): ")
         db.init()
+        db.add_admin(admin_name, admin_phone, admin_usr)
+        
     logging.basicConfig(level=logging.INFO)
     print("Aiogram started!")
     asyncio.run(main())

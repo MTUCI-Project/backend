@@ -246,9 +246,6 @@ def change_job_seeker(phone, date, time):
     connection.commit()
     connection.close()
     return True
-# import db
-# db.init()
-# db.add_admin("Нигметзянова Эвелина Рустемовна", "+79534883948","Evelina9489")
 
 
 def shit(ordinal) -> int:
