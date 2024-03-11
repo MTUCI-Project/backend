@@ -1,9 +1,9 @@
 import yaml
 
 with open("config.yaml") as f:
-    conf = yaml.safe_load(f)
+    conf = yaml.safe_load(f)[0]
 
-BOT_TOKEN = conf[0]
+BOT_TOKEN = conf["BOT_TOKEN"]
 SORRY_MESSAGE = "Извините, но я потерял контекст, пожалуйста, попробуйте ещё раз: "
 MONTHS = [
     "Января",
@@ -19,8 +19,8 @@ MONTHS = [
     "Ноября",
     "Декабря",
 ]
-INTERVIEW_TIME = conf[1].split(" ")
+INTERVIEW_TIME = conf["INTERVIEW_TIME"].split(" ")
 PERMISSION_ERROR = (
     "У вас нет прав для запуска данной команды, обратитесь к администратору!"
 )
-ADDRESS = conf[2]
+ADDRESS = conf["ADDRESS"]
