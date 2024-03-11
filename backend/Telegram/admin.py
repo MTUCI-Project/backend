@@ -11,7 +11,7 @@ from aiogram.utils.deep_linking import create_start_link
 import backend.db as db
 import backend.utils as utils
 import backend.config as config
-from Telegram import states, kb
+from backend.Telegram import states, kb
 
 
 
