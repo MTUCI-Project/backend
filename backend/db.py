@@ -1,12 +1,13 @@
 import sqlite3
 from hashlib import sha512
 import datetime
+import config
 from aiogram.utils.deep_linking import create_start_link, decode_payload
 
 
 
 def init():
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('''
@@ -53,7 +54,7 @@ mid TEXT NOT NULL
 
 
 def add_job_seeker(fio: str, phone: str, vacancy: str, date: int, time: str, inviter: str):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
     hassh = sha512()
     chatid = "k"
@@ -66,7 +67,7 @@ def add_job_seeker(fio: str, phone: str, vacancy: str, date: int, time: str, inv
 
 
 def add_admin(fio: str, phone: str, username: str):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
     hassh = sha512()
     hassh.update(f"{fio}{phone}{username}".encode())
@@ -79,7 +80,7 @@ def add_admin(fio: str, phone: str, username: str):
 
 
 def del_admin(phone: str):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('DELETE FROM Admins WHERE phone = ?', (phone,))
@@ -90,7 +91,7 @@ def del_admin(phone: str):
 
 
 def add_vacancy(name: str, link: str, admin: str):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
     hassh = sha512()
     hassh.update(f"{name}{link}{admin}".encode())
@@ -102,7 +103,7 @@ def add_vacancy(name: str, link: str, admin: str):
 
 
 def del_vacancy(hash: str):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('DELETE FROM Vacancies WHERE id = ?', (hash,))
@@ -113,7 +114,7 @@ def del_vacancy(hash: str):
 
 
 def is_this_time_free(time: int):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('SELECT * FROM Users')
@@ -128,7 +129,7 @@ def is_this_time_free(time: int):
 
 
 def get_vacancies():
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('SELECT * FROM Vacancies')
@@ -140,7 +141,7 @@ def get_vacancies():
     return job_seekers
 
 def get_administrators():
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('SELECT * FROM Admins')
@@ -152,7 +153,7 @@ def get_administrators():
     return admins
 
 def get_job_seekers():
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('SELECT * FROM JobSeekers')
@@ -164,7 +165,7 @@ def get_job_seekers():
     return js
 
 def get_tickets():
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('SELECT mid, text, chatid FROM Supports WHERE answered = ?', ("False",))
@@ -176,7 +177,7 @@ def get_tickets():
     return js
 
 def get_js(phone):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     # cursor.execute('SELECT fio, vacancy, date, time, phone FROM JobSeekers WHERE phone = ?', (phone))
@@ -193,7 +194,7 @@ def get_js(phone):
     return l
 
 def get_admin(phone):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     # cursor.execute('SELECT fio, vacancy, date, time, phone FROM JobSeekers WHERE phone = ?', (phone))
@@ -210,7 +211,7 @@ def get_admin(phone):
     return l
 
 def ga(username):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     # cursor.execute('SELECT fio, vacancy, date, time, phone FROM JobSeekers WHERE phone = ?', (phone))
@@ -227,7 +228,7 @@ def ga(username):
     return l
 
 def del_job_seeker(phone: str):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('DELETE FROM JobSeekers WHERE phone = ?', (phone,))
@@ -237,7 +238,7 @@ def del_job_seeker(phone: str):
     return True
 
 def change_job_seeker(phone, date, time):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('UPDATE JobSeekers SET time = ? WHERE phone = ?', (time, phone))
@@ -259,7 +260,7 @@ def shit(ordinal) -> int:
     
 
 def add_ticket(mid, message, chatid):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
     b = sha512()
     b.update(f"{message}{mid}{chatid}".encode())
@@ -270,7 +271,7 @@ def add_ticket(mid, message, chatid):
     return True
 
 def solve_ticket(mid, ):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('UPDATE Supports SET answered = ? WHERE id = ?', ("True", mid))
@@ -280,7 +281,7 @@ def solve_ticket(mid, ):
     return True
 
 def get_today_js():
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
     dt = datetime.datetime.now()
 
@@ -294,7 +295,7 @@ def get_today_js():
 
 
 def get_future_js():
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
     dt = datetime.datetime.now()
 
@@ -308,7 +309,7 @@ def get_future_js():
 
 
 def get_vacancy(hash):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('SELECT name FROM Vacancies WHERE id = ?', (str(hash),))
@@ -324,7 +325,7 @@ def get_vacancy(hash):
     return js
 
 def verify_administrator(phone, chatid):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('UPDATE Admins SET chatid = ? WHERE phone = ?', (chatid, phone))
@@ -334,7 +335,7 @@ def verify_administrator(phone, chatid):
     return True
 
 def verify_js(phone, chatid):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('UPDATE JobSeekers SET chatid = ? WHERE phone = ?', (chatid, phone))
@@ -345,7 +346,7 @@ def verify_js(phone, chatid):
 
 
 def get_totime_js(date, time):
-    connection = sqlite3.connect('eve.db')
+    connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
     cursor.execute('SELECT fio FROM JobSeekers WHERE date = ? AND time = ?', (date, time))

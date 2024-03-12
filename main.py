@@ -1,17 +1,18 @@
 import asyncio
 import logging
 from os import path, curdir
+import sys
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from fastapi import FastAPI
+import yaml
 
+import backend.db as db
 from backend.Telegram.handlers import router
 from backend.Telegram.admin import admin_router
-import backend.db as db
 import backend.config as config
-
 
 
 async def main():
@@ -29,13 +30,18 @@ async def main():
 
 
 if __name__ == "__main__":
-    if not path.isfile(curdir + "/eve.db"):
+    if not path.isfile(curdir + "/config.yml"):
+        print("Can't find config.yaml, exiting...")
+        sys.exit()
+
+    if not path.isfile(config.DB_PATH):
         admin_usr = input("Type admin's username from Telegram (without \"@\" character): ")
-        admin_phone = input("Type admin's phone (like '+78005553535'): ")
-        admin_name = input("Type admin's name (like 'Ну типо разраб'): ")
+        admin_phone = input("Type admin's phone (like \"+78005553535\"): ")
+        admin_name = input("Type admin's name (like \"Ну типо разраб\"): ")
         db.init()
-        db.add_admin(admin_name, admin_phone, admin_usr)
+        db.add_admin(admin_name, admin_phone, admin_usr)    
 
     logging.basicConfig(level=logging.INFO)
     print("Aiogram started!")
+    
     asyncio.run(main())

@@ -1,7 +1,7 @@
 import yaml
 
 with open("config.yaml") as f:
-    conf = yaml.safe_load(f)[0]
+    conf = yaml.safe_load(f)
 
 BOT_TOKEN = conf["BOT_TOKEN"]
 SORRY_MESSAGE = "Извините, но я потерял контекст, пожалуйста, попробуйте ещё раз: "
@@ -24,3 +24,4 @@ PERMISSION_ERROR = (
     "У вас нет прав для запуска данной команды, обратитесь к администратору!"
 )
 ADDRESS = conf["ADDRESS"]
+DB_PATH = conf["DB_PATH"]
