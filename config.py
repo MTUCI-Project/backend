@@ -1,6 +1,7 @@
 import yaml
+from os import getcwd
 
-with open("config.yaml") as f:
+with open(getcwd() + "/config.yml") as f:
     conf = yaml.safe_load(f)
 
 BOT_TOKEN = conf["BOT_TOKEN"]
@@ -25,3 +26,6 @@ PERMISSION_ERROR = (
 )
 ADDRESS = conf["ADDRESS"]
 DB_PATH = conf["DB_PATH"]
+INITIAL_ADMIN_USERNAME = conf['INITIAL_ADMIN_USERNAME']
+INITIAL_ADMIN_PHONE = conf['INITIAL_ADMIN_PHONE']
+INITIAL_ADMIN_NAME = conf['INITIAL_ADMIN_NAME']

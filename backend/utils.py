@@ -1,6 +1,6 @@
 from datetime import datetime
 
-import backend.config as config
+import config as config
 import backend.db as db
 
 def get_today_list(username: str):

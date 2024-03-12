@@ -10,7 +10,7 @@ from aiogram.utils.deep_linking import create_start_link, decode_payload
 
 import backend.db as db
 from backend.Telegram import states, kb
-import backend.config as config
+import config as config
 
 
 

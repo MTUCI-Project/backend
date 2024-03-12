@@ -12,7 +12,7 @@ import yaml
 import backend.db as db
 from backend.Telegram.handlers import router
 from backend.Telegram.admin import admin_router
-import backend.config as config
+import config as config
 
 
 async def main():
@@ -35,11 +35,8 @@ if __name__ == "__main__":
         sys.exit()
 
     if not path.isfile(config.DB_PATH):
-        admin_usr = input("Type admin's username from Telegram (without \"@\" character): ")
-        admin_phone = input("Type admin's phone (like \"+78005553535\"): ")
-        admin_name = input("Type admin's name (like \"Ну типо разраб\"): ")
         db.init()
-        db.add_admin(admin_name, admin_phone, admin_usr)    
+        db.add_admin(config.INITIAL_ADMIN_NAME, config.INITIAL_ADMIN_PHONE, config.INITIAL_ADMIN_USERNAME)    
 
     logging.basicConfig(level=logging.INFO)
     print("Aiogram started!")
