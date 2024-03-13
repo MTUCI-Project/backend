@@ -178,6 +178,7 @@ async def add_job_seeker_time(clbck: CallbackQuery, state: FSMContext):
     """Handle time for jobseeker"""
 
     try:
+        clbck.message.reply(str(db.ga(clbck.message.from_user.username)))
         if db.ga(clbck.message.from_user.username):
             job_seeker = await state.get_data()
             time = config.INTERVIEW_TIME[int(clbck.data.split('e')[1])]
