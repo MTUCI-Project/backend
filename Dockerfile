@@ -1,4 +1,4 @@
-FROM python:ubuntu
+FROM python:bookworm
 
 RUN apt update
 RUN apt install pipx
