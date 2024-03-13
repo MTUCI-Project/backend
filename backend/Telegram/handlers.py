@@ -137,7 +137,7 @@ async def add_job_seeker_vacancy(clbck: CallbackQuery, state: FSMContext):
                 days[0].append(
                     InlineKeyboardButton(
                         text=f"{v.day} {config.MONTHS[v.month-1]}",
-                        callback_data=f'day{v.toordinal()}'
+                        callback_data=f'diy{v.toordinal()}'
                     )
                 )
         days[1].append(InlineKeyboardButton(text="Отмена", callback_data='cancel'))
@@ -151,7 +151,7 @@ async def add_job_seeker_vacancy(clbck: CallbackQuery, state: FSMContext):
         await clbck.message.reply(text=config.SORRY_MESSAGE + "/ajs")
 
 
-@router.callback_query(F.data.startswith('day'))
+@router.callback_query(F.data.startswith('diy'))
 async def add_job_seeker_date(clbck: CallbackQuery, state: FSMContext):
     """Add job seedker date"""
 
