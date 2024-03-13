@@ -41,7 +41,7 @@ async def today_list(msg: Message):
 
 @admin_router.message(Command("list"))
 async def future_list(msg: Message):
-    """Sends to the telegram all information about upcoming today interviews"""
+    """Sends to the telegram all information about upcoming  interviews"""
 
     fl = utils.get_future_list(msg.from_user.username)
     if isinstance(fl, str):

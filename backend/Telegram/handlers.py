@@ -148,7 +148,7 @@ async def add_job_seeker_vacancy(clbck: CallbackQuery, state: FSMContext):
         )
         await state.set_state(states.JobSeeker.date)
     except:
-        await clbck.message.reply(text=config.MONTHS + "/ajs")
+        await clbck.message.reply(text=config.SORRY_MESSAGE + "/ajs")
 
 
 @router.callback_query(F.data.startswith('day'))
@@ -158,7 +158,7 @@ async def add_job_seeker_date(clbck: CallbackQuery, state: FSMContext):
     try:
         await state.update_data(date=clbck.data.split('y')[1])
         tk = []
-        for i, v in enumerate(config.MONTHS):
+        for i, v in enumerate(config.INTERVIEW_TIME):
             r = db.get_totime_js(clbck.data.split('y')[1], v)
             if len(r) < 5:
                 tk.append([InlineKeyboardButton(text=v, callback_data=f'time{i}')])
