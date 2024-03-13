@@ -1,6 +1,8 @@
-FROM python:alpine
+FROM python:ubuntu
 
-RUN apk update && apk upgrade && apk add bash poetry
+RUN apt update
+RUN apt install pipx
+RUN pipx install poetry
 COPY . /app
 WORKDIR /app
 RUN poetry install
