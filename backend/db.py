@@ -152,6 +152,18 @@ def get_administrators():
 
     return admins
 
+def get_verified_administrators():
+    connection = sqlite3.connect(config.DB_PATH)
+    cursor = connection.cursor()
+
+    cursor.execute('SELECT * FROM Admins WHERE chatid != ?', ('k'))
+    admins = cursor.fetchall()
+
+    connection.commit()
+    connection.close()
+
+    return admins
+
 def get_job_seekers():
     connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()

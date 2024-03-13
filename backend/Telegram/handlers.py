@@ -176,7 +176,7 @@ async def add_job_seeker_date(clbck: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data.startswith('time'))
 async def add_job_seeker_time(clbck: CallbackQuery, state: FSMContext):
     """Handle time for jobseeker"""
-
+    
     try:
         clbck.message.reply(str(db.ga(clbck.message.from_user.username)))
         if db.ga(clbck.message.from_user.username):
@@ -211,7 +211,7 @@ async def add_job_seeker_time(clbck: CallbackQuery, state: FSMContext):
                 job_seeker['admin']
             )
             a =[]
-            for i in db.get_administrators():
+            for i in db.get_verified_administrators():
                 a.append(i[2])
             for i in a:
                 t = db.get_admin(i)
