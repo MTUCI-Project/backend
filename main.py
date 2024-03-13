@@ -22,8 +22,7 @@ async def main():
     dp = Dispatcher(storage=MemoryStorage())
     app = FastAPI()
 
-    dp.include_router(admin_router)
-    dp.include_router(router)
+    dp.include_routers(admin_router, router)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 
