@@ -159,10 +159,10 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# Config.yaml
+# Config.yml
 #  This file used for configuring backend system
-config.yaml
+config.yml
 
-# Eve.db
+# *.db
 #  This file used for storing needed values in database
-eve.db
+*.db
