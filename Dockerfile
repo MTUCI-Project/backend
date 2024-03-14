@@ -1,9 +1,9 @@
-FROM python:bookworm
+FROM python:alpine
 
-RUN apt update
-RUN apt install pipx
-RUN pipx install poetry
-COPY . /app
-WORKDIR /app
+RUN apk update
+RUN apk upgrade
+RUN apk add --no-cache poetry
+WORKDIR /code
+COPY . .
 RUN poetry install
-VOLUME /my_volum
+VOLUME /code
