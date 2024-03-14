@@ -282,11 +282,11 @@ def add_ticket(mid, message, chatid):
     connection.close()
     return True
 
-def solve_ticket(mid, ):
+def solve_ticket(mid):
     connection = sqlite3.connect(config.DB_PATH)
     cursor = connection.cursor()
 
-    cursor.execute('UPDATE Supports SET answered = ? WHERE id = ?', ("True", mid))
+    cursor.execute('UPDATE Supports SET answered = ? WHERE mid = ?', ("True", mid))
 
     connection.commit()
     connection.close()

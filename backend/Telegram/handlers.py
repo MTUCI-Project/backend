@@ -354,7 +354,7 @@ async def sup_ace(clbck: CallbackQuery, state: FSMContext):
     db.add_ticket(clbck.message.message_id, clbck.message.text, clbck.message.chat.id)
     b= await state.get_data()
     a =[]
-    for i in db.get_administrators():
+    for i in db.get_verified_administrators():
         a.append(i[2])
     for i in a:
         t = db.get_admin(i)
