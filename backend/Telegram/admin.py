@@ -177,7 +177,7 @@ async def del_jobseeker(msg: Message, state: FSMContext):
             js = db.get_job_seekers()
             names = []
             for i, v in enumerate(js):
-                names.append([InlineKeyboardButton(text=v[1], callback_data=f'djs{i[2]}')])
+                names.append([InlineKeyboardButton(text=db.get_js(v), callback_data=f'djs{i[2]}')])
             names.append([InlineKeyboardButton(text="Отмена", callback_data='cancel')])
             await msg.reply(
                 text="Выберите соискателя, которого хотите удалить:",
