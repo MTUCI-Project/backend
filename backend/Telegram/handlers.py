@@ -351,7 +351,6 @@ async def sup_dec(clbck: CallbackQuery, state: FSMContext):
 async def sup_ace(clbck: CallbackQuery, state: FSMContext):
     """Handler when user need support"""
 
-    db.add_ticket(clbck.message.message_id, clbck.message.text, clbck.message.chat.id)
     b= await state.get_data()
     a =[]
     for i in db.get_verified_administrators():
