@@ -31,10 +31,10 @@ async def today_list(msg: Message):
     else:
         for _, v in enumerate(tl):
             await msg.reply(text=f"""
-Собеседуемый {v[0]}:
-Телефон: {v[1]}
-Вакансия: {v[2]}
-Время: {v[3]}
+Собеседуемый {str(v[0])}:
+Телефон: {str(v[1])}
+Вакансия: {str(v[2])}
+Время: {str(v[3])}
 """)
 
 
