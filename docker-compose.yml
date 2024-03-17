@@ -1,9 +1,11 @@
 version: "3"
 
 services:
-
   backend:
-
     build: .
+    volumes:
+      - data-volume:/code/super_important.db
     command: "poetry run python ./main.py"
 
+volumes:
+  data-volume:
