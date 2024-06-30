@@ -5,5 +5,3 @@ RUN apk upgrade
 RUN pip install aiogram fastapi pyyaml
 WORKDIR /code
 COPY . .
-RUN poetry install
-
