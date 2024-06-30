@@ -2,7 +2,7 @@ FROM python:alpine
 
 RUN apk update
 RUN apk upgrade
-RUN apk add --no-cache poetry
+RUN pip install aiogram fastapi pyyaml
 WORKDIR /code
 COPY . .
 RUN poetry install

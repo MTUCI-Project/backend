@@ -5,7 +5,7 @@ services:
     build: .
     volumes:
       - data-volume:/code/super_important.db
-    command: "poetry run python ./main.py"
+    command: "python ./main.py"
 
 volumes:
   data-volume:
