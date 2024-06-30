@@ -18,7 +18,7 @@ import config as config
 async def main():
     """Main function"""
 
-    bot = Bot(token=config.BOT_TOKEN, parse_mode=ParseMode.HTML)
+    bot = Bot(token=config.BOT_TOKEN)
     dp = Dispatcher(storage=MemoryStorage())
     app = FastAPI()
 
