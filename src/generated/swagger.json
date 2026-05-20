@@ -107,6 +107,9 @@
 					"eventId": {
 						"type": "string"
 					},
+					"productId": {
+						"type": "string"
+					},
 					"userId": {
 						"type": "string"
 					},
@@ -249,6 +252,160 @@
 				],
 				"type": "object"
 			},
+			"SponsorProductDTO": {
+				"properties": {
+					"updatedAt": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"isActive": {
+						"type": "boolean"
+					},
+					"metadata": {},
+					"tags": {},
+					"category": {
+						"type": "string"
+					},
+					"priceLabel": {
+						"type": "string"
+					},
+					"imageUrl": {
+						"type": "string"
+					},
+					"sponsorName": {
+						"type": "string"
+					},
+					"referralUrl": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"updatedAt",
+					"createdAt",
+					"isActive",
+					"metadata",
+					"tags",
+					"sponsorName",
+					"referralUrl",
+					"description",
+					"title",
+					"id"
+				],
+				"type": "object"
+			},
+			"Record_string.unknown_": {
+				"properties": {},
+				"additionalProperties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"CreateSponsorProductBodyDTO": {
+				"properties": {
+					"isActive": {
+						"type": "boolean"
+					},
+					"metadata": {
+						"$ref": "#/components/schemas/Record_string.unknown_"
+					},
+					"tags": {
+						"items": {},
+						"type": "array"
+					},
+					"category": {
+						"type": "string"
+					},
+					"priceLabel": {
+						"type": "string"
+					},
+					"imageUrl": {
+						"type": "string"
+					},
+					"sponsorName": {
+						"type": "string"
+					},
+					"referralUrl": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"sponsorName",
+					"referralUrl",
+					"description",
+					"title"
+				],
+				"type": "object"
+			},
+			"UpdateSponsorProductBodyDTO": {
+				"properties": {
+					"isActive": {
+						"type": "boolean"
+					},
+					"metadata": {
+						"$ref": "#/components/schemas/Record_string.unknown_"
+					},
+					"tags": {
+						"items": {},
+						"type": "array"
+					},
+					"category": {
+						"type": "string",
+						"nullable": true
+					},
+					"priceLabel": {
+						"type": "string",
+						"nullable": true
+					},
+					"imageUrl": {
+						"type": "string",
+						"nullable": true
+					},
+					"sponsorName": {
+						"type": "string"
+					},
+					"referralUrl": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"type": "object"
+			},
+			"OkDTO": {
+				"properties": {
+					"status": {
+						"type": "string",
+						"enum": [
+							"ok"
+						],
+						"nullable": false
+					}
+				},
+				"required": [
+					"status"
+				],
+				"type": "object"
+			},
 			"OnboardingAnswerDTO": {
 				"properties": {
 					"updatedAt": {
@@ -362,18 +519,33 @@
 				],
 				"type": "object"
 			},
-			"OkDTO": {
+			"SponsorProductContextDTO": {
 				"properties": {
-					"status": {
-						"type": "string",
-						"enum": [
-							"ok"
-						],
-						"nullable": false
+					"metadata": {},
+					"tags": {},
+					"category": {
+						"type": "string"
+					},
+					"sponsorName": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
 					}
 				},
 				"required": [
-					"status"
+					"metadata",
+					"tags",
+					"sponsorName",
+					"description",
+					"title",
+					"id"
 				],
 				"type": "object"
 			},
@@ -505,12 +677,6 @@
 				],
 				"type": "object"
 			},
-			"Record_string.unknown_": {
-				"properties": {},
-				"additionalProperties": {},
-				"type": "object",
-				"description": "Construct a type with a set of properties K of type T"
-			},
 			"UserAiProfileDTO": {
 				"properties": {
 					"updatedAt": {
@@ -619,6 +785,9 @@
 						"type": "string"
 					},
 					"title": {
+						"type": "string"
+					},
+					"productId": {
 						"type": "string"
 					}
 				},
@@ -776,6 +945,125 @@
 					"status"
 				],
 				"type": "object"
+			},
+			"SponsorSuggestionStatusDTO": {
+				"type": "string",
+				"enum": [
+					"pending",
+					"sent",
+					"dismissed",
+					"clicked",
+					"converted",
+					"expired"
+				]
+			},
+			"SponsorSuggestionDTO": {
+				"properties": {
+					"product": {
+						"$ref": "#/components/schemas/SponsorProductDTO"
+					},
+					"updatedAt": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"deliveredAt": {
+						"type": "string"
+					},
+					"metadata": {},
+					"status": {
+						"$ref": "#/components/schemas/SponsorSuggestionStatusDTO"
+					},
+					"reason": {
+						"type": "string"
+					},
+					"placement": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"reminderId": {
+						"type": "string"
+					},
+					"todoId": {
+						"type": "string"
+					},
+					"eventId": {
+						"type": "string"
+					},
+					"productId": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"updatedAt",
+					"createdAt",
+					"metadata",
+					"status",
+					"placement",
+					"productId",
+					"userId",
+					"id"
+				],
+				"type": "object"
+			},
+			"CreateSponsorSuggestionBodyDTO": {
+				"properties": {
+					"metadata": {
+						"$ref": "#/components/schemas/Record_string.unknown_"
+					},
+					"reason": {
+						"type": "string"
+					},
+					"placement": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"reminderId": {
+						"type": "string"
+					},
+					"todoId": {
+						"type": "string"
+					},
+					"eventId": {
+						"type": "string"
+					},
+					"productId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"placement",
+					"productId"
+				],
+				"type": "object"
+			},
+			"UpdateSponsorSuggestionBodyDTO": {
+				"properties": {
+					"status": {
+						"$ref": "#/components/schemas/SponsorSuggestionStatusDTO"
+					}
+				},
+				"required": [
+					"status"
+				],
+				"type": "object"
 			}
 		},
 		"securitySchemes": {
@@ -857,6 +1145,190 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/sponsor-products": {
+			"get": {
+				"operationId": "List",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/SponsorProductDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Sponsor Products"
+				],
+				"security": [
+					{
+						"cookieAuth": [
+							"sponsors.manage"
+						]
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SponsorProductDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Sponsor Products"
+				],
+				"security": [
+					{
+						"cookieAuth": [
+							"sponsors.manage"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateSponsorProductBodyDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/sponsor-products/{id}": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SponsorProductDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Sponsor Products"
+				],
+				"security": [
+					{
+						"cookieAuth": [
+							"sponsors.manage"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"patch": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SponsorProductDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Sponsor Products"
+				],
+				"security": [
+					{
+						"cookieAuth": [
+							"sponsors.manage"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateSponsorProductBodyDTO"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OkDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Sponsor Products"
+				],
+				"security": [
+					{
+						"cookieAuth": [
+							"sponsors.manage"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/reminders": {
@@ -1140,6 +1612,35 @@
 				"security": [
 					{
 						"cookieAuth": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/ai-service/sponsor-context": {
+			"get": {
+				"operationId": "GetSponsorContext",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/SponsorProductContextDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
 					}
 				],
 				"parameters": []
@@ -1638,6 +2139,104 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/UpdateReminderBodyDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/ai-service/users/{userId}/sponsor-suggestions": {
+			"post": {
+				"operationId": "CreateSponsorSuggestion",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SponsorSuggestionDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateSponsorSuggestionBodyDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/ai-service/users/{userId}/sponsor-suggestions/{id}": {
+			"patch": {
+				"operationId": "UpdateSponsorSuggestion",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SponsorSuggestionDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateSponsorSuggestionBodyDTO"
 							}
 						}
 					}

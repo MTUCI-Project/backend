@@ -10,26 +10,27 @@ generator client {
 // ==================== USERS ====================
 
 model User {
-  id        String   @id @default(uuid())
-  username  String   @unique
-  password  String   @map("password_hash")
+  id       String @id @default(uuid())
+  username String @unique
+  password String @map("password_hash")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
   isBanned Boolean @default(false)
 
-  assignments RoleAssignment[] @relation("RoleAssignments_User")
-  assignmentsCreated RoleAssignment[] @relation("RoleAssignments_Creator")
-  coupleLinksCreated CoupleLink[] @relation("CoupleLinks_Creator")
-  coupleLinksAsUserA CoupleLink[] @relation("CoupleLinks_UserA")
-  coupleLinksAsUserB CoupleLink[] @relation("CoupleLinks_UserB")
-  onboardingAnswers OnboardingAnswer[]
-  events UserEvent[]
-  todos Todo[]
-  reminders Reminder[]
-  sponsorOffers SponsorOffer[]
+  assignments        RoleAssignment[]    @relation("RoleAssignments_User")
+  assignmentsCreated RoleAssignment[]    @relation("RoleAssignments_Creator")
+  coupleLinksCreated CoupleLink[]        @relation("CoupleLinks_Creator")
+  coupleLinksAsUserA CoupleLink[]        @relation("CoupleLinks_UserA")
+  coupleLinksAsUserB CoupleLink[]        @relation("CoupleLinks_UserB")
+  onboardingAnswers  OnboardingAnswer[]
+  events             UserEvent[]
+  todos              Todo[]
+  reminders          Reminder[]
+  sponsorOffers      SponsorOffer[]
+  sponsorSuggestions SponsorSuggestion[]
 
   @@index([createdAt])
   @@index([deletedAt])
@@ -79,6 +80,40 @@ enum SponsorOfferStatus {
   expired
 }
 
+enum SponsorSuggestionStatus {
+  pending
+  sent
+  dismissed
+  clicked
+  converted
+  expired
+}
+
+model SponsorProduct {
+  id          String  @id @default(uuid())
+  title       String
+  description String
+  referralUrl String
+  sponsorName String
+  imageUrl    String?
+  priceLabel  String?
+  category    String?
+  tags        Json    @default("[]")
+  metadata    Json    @default("{}")
+  isActive    Boolean @default(true)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  offers      SponsorOffer[]
+  suggestions SponsorSuggestion[]
+
+  @@index([isActive, deletedAt])
+  @@index([sponsorName])
+  @@index([category])
+}
+
 model CoupleLink {
   id          String           @id @default(uuid())
   userAId     String
@@ -87,10 +122,10 @@ model CoupleLink {
   inviteCode  String           @unique
   createdById String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   acceptedAt DateTime?
-  revokedAt DateTime?
+  revokedAt  DateTime?
 
   userA     User  @relation("CoupleLinks_UserA", fields: [userAId], references: [id], onDelete: Cascade)
   userB     User? @relation("CoupleLinks_UserB", fields: [userBId], references: [id], onDelete: SetNull)
@@ -127,37 +162,39 @@ model UserEvent {
   source      DomainSource @default(user)
   metadata    Json         @default("{}")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  todos Todo[]
-  reminders Reminder[]
-  sponsorOffers SponsorOffer[]
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  todos              Todo[]
+  reminders          Reminder[]
+  sponsorOffers      SponsorOffer[]
+  sponsorSuggestions SponsorSuggestion[]
 
   @@index([userId, eventAt])
   @@index([userId, deletedAt])
 }
 
 model Todo {
-  id       String     @id @default(uuid())
+  id       String       @id @default(uuid())
   userId   String
   eventId  String?
   title    String
-  status   TodoStatus @default(open)
+  status   TodoStatus   @default(open)
   dueAt    DateTime?
   source   DomainSource @default(user)
-  metadata Json       @default("{}")
+  metadata Json         @default("{}")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event UserEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
-  reminders Reminder[]
-  sponsorOffers SponsorOffer[]
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event              UserEvent?          @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  reminders          Reminder[]
+  sponsorOffers      SponsorOffer[]
+  sponsorSuggestions SponsorSuggestion[]
 
   @@index([userId, status])
   @@index([userId, dueAt])
@@ -168,6 +205,7 @@ model Todo {
 model SponsorOffer {
   id          String             @id @default(uuid())
   userId      String
+  productId   String?
   eventId     String?
   todoId      String?
   title       String
@@ -181,13 +219,46 @@ model SponsorOffer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event UserEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
-  todo Todo? @relation(fields: [todoId], references: [id], onDelete: SetNull)
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product SponsorProduct? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  event   UserEvent?      @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  todo    Todo?           @relation(fields: [todoId], references: [id], onDelete: SetNull)
 
   @@index([userId, status])
+  @@index([productId])
   @@index([eventId])
   @@index([todoId])
+}
+
+model SponsorSuggestion {
+  id         String                  @id @default(uuid())
+  userId     String
+  productId  String
+  eventId    String?
+  todoId     String?
+  reminderId String?
+  title      String?
+  message    String?
+  placement  String
+  reason     String?
+  status     SponsorSuggestionStatus @default(pending)
+  metadata   Json                    @default("{}")
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deliveredAt DateTime?
+
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product  SponsorProduct @relation(fields: [productId], references: [id], onDelete: Restrict)
+  event    UserEvent?     @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  todo     Todo?          @relation(fields: [todoId], references: [id], onDelete: SetNull)
+  reminder Reminder?      @relation(fields: [reminderId], references: [id], onDelete: SetNull)
+
+  @@index([userId, status])
+  @@index([productId])
+  @@index([eventId])
+  @@index([todoId])
+  @@index([reminderId])
 }
 
 model Reminder {
@@ -204,9 +275,10 @@ model Reminder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event UserEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
-  todo Todo? @relation(fields: [todoId], references: [id], onDelete: SetNull)
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event              UserEvent?          @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  todo               Todo?               @relation(fields: [todoId], references: [id], onDelete: SetNull)
+  sponsorSuggestions SponsorSuggestion[]
 
   @@index([userId, triggerAt])
   @@index([userId, status])
@@ -217,11 +289,11 @@ model Reminder {
 // ==================== RBAC ====================
 
 model Role {
-  id          String   @id @default(uuid())
-  key         String   @unique
+  id          String  @id @default(uuid())
+  key         String  @unique
   name        String
   description String?
-  isSystem    Boolean  @default(false)
+  isSystem    Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -233,8 +305,8 @@ model Role {
 }
 
 model Permission {
-  id          String   @id @default(uuid())
-  key         String   @unique
+  id          String  @id @default(uuid())
+  key         String  @unique
   description String?
 
   createdAt DateTime @default(now())
@@ -258,15 +330,15 @@ model RolePermission {
 }
 
 model RoleAssignment {
-  id           String   @id @default(uuid())
-  userId       String
-  roleId       String
+  id     String @id @default(uuid())
+  userId String
+  roleId String
 
-  createdAt    DateTime @default(now())
-  createdById  String?
+  createdAt   DateTime @default(now())
+  createdById String?
 
-  user      User @relation("RoleAssignments_User", fields: [userId], references: [id], onDelete: Cascade)
-  role      Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  user User @relation("RoleAssignments_User", fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
   createdBy User? @relation("RoleAssignments_Creator", fields: [createdById], references: [id], onDelete: SetNull)
 

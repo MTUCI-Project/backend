@@ -14,6 +14,7 @@ type ReminderStatus =
 type TodoStatus = 'open' | 'done' | 'dismissed' | 'cancelled';
 
 type SponsorOfferInput = {
+    productId?: string;
     title: string;
     description?: string;
     url?: string;
@@ -202,9 +203,29 @@ async function createSponsorOffer(
     input: SponsorOfferInput,
     params: { eventId?: string; todoId?: string },
 ) {
+    if (input.productId) {
+        const product = await tx.sponsorProduct.findFirst({
+            where: {
+                id: input.productId,
+                isActive: true,
+                deletedAt: null,
+            },
+            select: { id: true },
+        });
+
+        if (!product) {
+            throw apiError(
+                404,
+                'SPONSOR_PRODUCT_NOT_FOUND',
+                'Sponsor product not found',
+            );
+        }
+    }
+
     return tx.sponsorOffer.create({
         data: {
             userId,
+            productId: input.productId,
             eventId: params.eventId,
             todoId: params.todoId,
             title: input.title,

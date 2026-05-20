@@ -8,11 +8,15 @@ import { UsersController } from './../http/controllers/user.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { TodosController } from './../http/controllers/todos.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { SponsorProductsController } from './../http/controllers/sponsorProducts.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { RemindersController } from './../http/controllers/reminders.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { OnboardingController } from './../http/controllers/onboarding.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../http/controllers/auth.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { AiSponsorController } from './../http/controllers/aiSponsor.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AiServiceController } from './../http/controllers/aiService.controller';
 import { expressAuthentication } from './../http/tsoa/authentication';
@@ -47,7 +51,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SponsorOfferDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"updatedAt":{"dataType":"string","required":true},"createdAt":{"dataType":"string","required":true},"metadata":{"dataType":"any","required":true},"status":{"ref":"SponsorOfferStatusDTO","required":true},"placement":{"dataType":"string","required":true},"sponsorName":{"dataType":"string","required":true},"url":{"dataType":"string"},"description":{"dataType":"string"},"title":{"dataType":"string","required":true},"todoId":{"dataType":"string"},"eventId":{"dataType":"string"},"userId":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"updatedAt":{"dataType":"string","required":true},"createdAt":{"dataType":"string","required":true},"metadata":{"dataType":"any","required":true},"status":{"ref":"SponsorOfferStatusDTO","required":true},"placement":{"dataType":"string","required":true},"sponsorName":{"dataType":"string","required":true},"url":{"dataType":"string"},"description":{"dataType":"string"},"title":{"dataType":"string","required":true},"todoId":{"dataType":"string"},"eventId":{"dataType":"string"},"productId":{"dataType":"string"},"userId":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ReminderStatusDTO": {
@@ -68,6 +72,31 @@ const models: TsoaRoute.Models = {
     "TodoDTO": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"updatedAt":{"dataType":"string","required":true},"createdAt":{"dataType":"string","required":true},"reminders":{"dataType":"array","array":{"dataType":"refAlias","ref":"ReminderDTO"},"required":true},"sponsorOffers":{"dataType":"array","array":{"dataType":"refAlias","ref":"SponsorOfferDTO"},"required":true},"metadata":{"dataType":"any","required":true},"source":{"ref":"SourceDTO","required":true},"dueAt":{"dataType":"string"},"status":{"ref":"TodoStatusDTO","required":true},"title":{"dataType":"string","required":true},"eventId":{"dataType":"string"},"userId":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SponsorProductDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"updatedAt":{"dataType":"string","required":true},"createdAt":{"dataType":"string","required":true},"isActive":{"dataType":"boolean","required":true},"metadata":{"dataType":"any","required":true},"tags":{"dataType":"any","required":true},"category":{"dataType":"string"},"priceLabel":{"dataType":"string"},"imageUrl":{"dataType":"string"},"sponsorName":{"dataType":"string","required":true},"referralUrl":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Record_string.unknown_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{},"additionalProperties":{"dataType":"any"},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateSponsorProductBodyDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"isActive":{"dataType":"boolean"},"metadata":{"ref":"Record_string.unknown_"},"tags":{"dataType":"array","array":{"dataType":"any"}},"category":{"dataType":"string"},"priceLabel":{"dataType":"string"},"imageUrl":{"dataType":"string"},"sponsorName":{"dataType":"string","required":true},"referralUrl":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UpdateSponsorProductBodyDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"isActive":{"dataType":"boolean"},"metadata":{"ref":"Record_string.unknown_"},"tags":{"dataType":"array","array":{"dataType":"any"}},"category":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"priceLabel":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"imageUrl":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"sponsorName":{"dataType":"string"},"referralUrl":{"dataType":"string"},"description":{"dataType":"string"},"title":{"dataType":"string"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "OkDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"enum","enums":["ok"],"required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "OnboardingAnswerDTO": {
@@ -100,9 +129,9 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"password":{"dataType":"string","required":true},"username":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "OkDTO": {
+    "SponsorProductContextDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"enum","enums":["ok"],"required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"metadata":{"dataType":"any","required":true},"tags":{"dataType":"any","required":true},"category":{"dataType":"string"},"sponsorName":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserEventDTO": {
@@ -118,11 +147,6 @@ const models: TsoaRoute.Models = {
     "UserAiProfileFactDTO": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"updatedAt":{"dataType":"string","required":true},"confidence":{"dataType":"double"},"source":{"dataType":"string"},"value":{"dataType":"any","required":true},"key":{"dataType":"string","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Record_string.unknown_": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{},"additionalProperties":{"dataType":"any"},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserAiProfileDTO": {
@@ -152,7 +176,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SponsorOfferBodyDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"metadata":{"ref":"Record_string.unknown_"},"placement":{"dataType":"string","required":true},"sponsorName":{"dataType":"string","required":true},"url":{"dataType":"string"},"description":{"dataType":"string"},"title":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"metadata":{"ref":"Record_string.unknown_"},"placement":{"dataType":"string","required":true},"sponsorName":{"dataType":"string","required":true},"url":{"dataType":"string"},"description":{"dataType":"string"},"title":{"dataType":"string","required":true},"productId":{"dataType":"string"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ReminderBodyDTO": {
@@ -188,6 +212,26 @@ const models: TsoaRoute.Models = {
     "UpdateReminderBodyDTO": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"ref":"ReminderStatusDTO","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SponsorSuggestionStatusDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["pending"]},{"dataType":"enum","enums":["sent"]},{"dataType":"enum","enums":["dismissed"]},{"dataType":"enum","enums":["clicked"]},{"dataType":"enum","enums":["converted"]},{"dataType":"enum","enums":["expired"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SponsorSuggestionDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"product":{"ref":"SponsorProductDTO"},"updatedAt":{"dataType":"string","required":true},"createdAt":{"dataType":"string","required":true},"deliveredAt":{"dataType":"string"},"metadata":{"dataType":"any","required":true},"status":{"ref":"SponsorSuggestionStatusDTO","required":true},"reason":{"dataType":"string"},"placement":{"dataType":"string","required":true},"message":{"dataType":"string"},"title":{"dataType":"string"},"reminderId":{"dataType":"string"},"todoId":{"dataType":"string"},"eventId":{"dataType":"string"},"productId":{"dataType":"string","required":true},"userId":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "CreateSponsorSuggestionBodyDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"metadata":{"ref":"Record_string.unknown_"},"reason":{"dataType":"string"},"placement":{"dataType":"string","required":true},"message":{"dataType":"string"},"title":{"dataType":"string"},"reminderId":{"dataType":"string"},"todoId":{"dataType":"string"},"eventId":{"dataType":"string"},"productId":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UpdateSponsorSuggestionBodyDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"ref":"SponsorSuggestionStatusDTO","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -258,6 +302,161 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'list',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsSponsorProductsController_list: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/sponsor-products',
+            authenticateMiddleware([{"cookieAuth":["sponsors.manage"]}]),
+            ...(fetchMiddlewares<RequestHandler>(SponsorProductsController)),
+            ...(fetchMiddlewares<RequestHandler>(SponsorProductsController.prototype.list)),
+
+            async function SponsorProductsController_list(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsSponsorProductsController_list, request, response });
+
+                const controller = new SponsorProductsController();
+
+              await templateService.apiHandler({
+                methodName: 'list',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsSponsorProductsController_get: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.get('/sponsor-products/:id',
+            authenticateMiddleware([{"cookieAuth":["sponsors.manage"]}]),
+            ...(fetchMiddlewares<RequestHandler>(SponsorProductsController)),
+            ...(fetchMiddlewares<RequestHandler>(SponsorProductsController.prototype.get)),
+
+            async function SponsorProductsController_get(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsSponsorProductsController_get, request, response });
+
+                const controller = new SponsorProductsController();
+
+              await templateService.apiHandler({
+                methodName: 'get',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsSponsorProductsController_create: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"ref":"CreateSponsorProductBodyDTO"},
+        };
+        app.post('/sponsor-products',
+            authenticateMiddleware([{"cookieAuth":["sponsors.manage"]}]),
+            ...(fetchMiddlewares<RequestHandler>(SponsorProductsController)),
+            ...(fetchMiddlewares<RequestHandler>(SponsorProductsController.prototype.create)),
+
+            async function SponsorProductsController_create(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsSponsorProductsController_create, request, response });
+
+                const controller = new SponsorProductsController();
+
+              await templateService.apiHandler({
+                methodName: 'create',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsSponsorProductsController_update: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"UpdateSponsorProductBodyDTO"},
+        };
+        app.patch('/sponsor-products/:id',
+            authenticateMiddleware([{"cookieAuth":["sponsors.manage"]}]),
+            ...(fetchMiddlewares<RequestHandler>(SponsorProductsController)),
+            ...(fetchMiddlewares<RequestHandler>(SponsorProductsController.prototype.update)),
+
+            async function SponsorProductsController_update(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsSponsorProductsController_update, request, response });
+
+                const controller = new SponsorProductsController();
+
+              await templateService.apiHandler({
+                methodName: 'update',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsSponsorProductsController_delete: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+        };
+        app.delete('/sponsor-products/:id',
+            authenticateMiddleware([{"cookieAuth":["sponsors.manage"]}]),
+            ...(fetchMiddlewares<RequestHandler>(SponsorProductsController)),
+            ...(fetchMiddlewares<RequestHandler>(SponsorProductsController.prototype.delete)),
+
+            async function SponsorProductsController_delete(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsSponsorProductsController_delete, request, response });
+
+                const controller = new SponsorProductsController();
+
+              await templateService.apiHandler({
+                methodName: 'delete',
                 controller,
                 response,
                 next,
@@ -475,6 +674,36 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'logout',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAiSponsorController_getSponsorContext: Record<string, TsoaRoute.ParameterSchema> = {
+        };
+        app.get('/ai-service/sponsor-context',
+            authenticateMiddleware([{"serviceBearerAuth":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AiSponsorController)),
+            ...(fetchMiddlewares<RequestHandler>(AiSponsorController.prototype.getSponsorContext)),
+
+            async function AiSponsorController_getSponsorContext(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAiSponsorController_getSponsorContext, request, response });
+
+                const controller = new AiSponsorController();
+
+              await templateService.apiHandler({
+                methodName: 'getSponsorContext',
                 controller,
                 response,
                 next,
@@ -829,6 +1058,71 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'updateReminder',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAiServiceController_createSponsorSuggestion: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"CreateSponsorSuggestionBodyDTO"},
+        };
+        app.post('/ai-service/users/:userId/sponsor-suggestions',
+            authenticateMiddleware([{"serviceBearerAuth":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.createSponsorSuggestion)),
+
+            async function AiServiceController_createSponsorSuggestion(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAiServiceController_createSponsorSuggestion, request, response });
+
+                const controller = new AiServiceController();
+
+              await templateService.apiHandler({
+                methodName: 'createSponsorSuggestion',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAiServiceController_updateSponsorSuggestion: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"UpdateSponsorSuggestionBodyDTO"},
+        };
+        app.patch('/ai-service/users/:userId/sponsor-suggestions/:id',
+            authenticateMiddleware([{"serviceBearerAuth":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.updateSponsorSuggestion)),
+
+            async function AiServiceController_updateSponsorSuggestion(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAiServiceController_updateSponsorSuggestion, request, response });
+
+                const controller = new AiServiceController();
+
+              await templateService.apiHandler({
+                methodName: 'updateSponsorSuggestion',
                 controller,
                 response,
                 next,

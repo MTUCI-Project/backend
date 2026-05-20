@@ -15,6 +15,7 @@ export type SponsorOfferStatusDTO =
     | 'expired';
 
 export type SponsorOfferBodyDTO = {
+    productId?: string;
     title: string;
     description?: string;
     url?: string;
@@ -100,6 +101,7 @@ export type OnboardingAnswerDTO = {
 export type SponsorOfferDTO = {
     id: string;
     userId: string;
+    productId?: string;
     eventId?: string;
     todoId?: string;
     title: string;
@@ -202,6 +204,7 @@ export function toSponsorOfferDTO(offer: any): SponsorOfferDTO {
     return {
         id: offer.id,
         userId: offer.userId,
+        productId: offer.productId ?? undefined,
         eventId: offer.eventId ?? undefined,
         todoId: offer.todoId ?? undefined,
         title: offer.title,

@@ -17,6 +17,9 @@ export enum Permission {
 
     /** Assign roles to users */
     ROLES_ASSIGN = 'roles.assign',
+
+    /** Manage sponsor product catalog */
+    SPONSORS_MANAGE = 'sponsors.manage',
 }
 
 export enum Scope {

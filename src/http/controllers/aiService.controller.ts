@@ -22,6 +22,10 @@ import {
     updateUserTodo,
 } from '../../domain/companion/companion.service';
 import {
+    createSponsorSuggestion as createSponsorSuggestionRecord,
+    updateSponsorSuggestionStatus,
+} from '../../domain/sponsors/sponsor.service';
+import {
     deleteUserAiProfileFactByKey,
     getUserAiProfile,
     updateUserAiProfile,
@@ -41,6 +45,10 @@ import {
     userIdParamsSchema,
     uuidParamsSchema,
 } from '../schemas/companion.schemas';
+import {
+    sponsorSuggestionCreateSchema,
+    sponsorSuggestionUpdateSchema,
+} from '../schemas/sponsor.schemas';
 import {
     toUserAiProfileDTO,
     type AiProfileFactInputDTO,
@@ -62,6 +70,12 @@ import {
     type UpdateTodoBodyDTO,
     type UserEventDTO,
 } from '../dto/companion.dto';
+import {
+    toSponsorSuggestionDTO,
+    type CreateSponsorSuggestionBodyDTO,
+    type SponsorSuggestionDTO,
+    type UpdateSponsorSuggestionBodyDTO,
+} from '../dto/sponsor.dto';
 import type { OkDTO } from '../dto/common.dto';
 
 type AiServiceFactsBodyDTO = {
@@ -226,6 +240,36 @@ export class AiServiceController extends Controller {
             await updateUserReminderStatus(
                 userParams.userId,
                 reminderParams.id,
+                data.status,
+            ),
+        );
+    }
+
+    @Post('{userId}/sponsor-suggestions')
+    public async createSponsorSuggestion(
+        @Path() userId: string,
+        @Body() body: CreateSponsorSuggestionBodyDTO,
+    ): Promise<SponsorSuggestionDTO> {
+        const params = userIdParamsSchema.parse({ userId });
+        const data = sponsorSuggestionCreateSchema.parse(body);
+        return toSponsorSuggestionDTO(
+            await createSponsorSuggestionRecord(params.userId, data),
+        );
+    }
+
+    @Patch('{userId}/sponsor-suggestions/{id}')
+    public async updateSponsorSuggestion(
+        @Path() userId: string,
+        @Path() id: string,
+        @Body() body: UpdateSponsorSuggestionBodyDTO,
+    ): Promise<SponsorSuggestionDTO> {
+        const userParams = userIdParamsSchema.parse({ userId });
+        const suggestionParams = uuidParamsSchema.parse({ id });
+        const data = sponsorSuggestionUpdateSchema.parse(body);
+        return toSponsorSuggestionDTO(
+            await updateSponsorSuggestionStatus(
+                userParams.userId,
+                suggestionParams.id,
                 data.status,
             ),
         );

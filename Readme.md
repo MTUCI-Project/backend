@@ -30,6 +30,7 @@
 
 AI-бэку доступны ручки:
 
+- `GET /ai-service/sponsor-context`
 - `GET /ai-service/users/{userId}/context`
 - `PATCH /ai-service/users/{userId}/profile`
 - `POST /ai-service/users/{userId}/facts`
@@ -41,6 +42,8 @@ AI-бэку доступны ручки:
 - `PATCH /ai-service/users/{userId}/todos/{id}`
 - `DELETE /ai-service/users/{userId}/todos/{id}`
 - `PATCH /ai-service/users/{userId}/reminders/{id}`
+- `POST /ai-service/users/{userId}/sponsor-suggestions`
+- `PATCH /ai-service/users/{userId}/sponsor-suggestions/{id}`
 
 Все `/ai-service/*` ручки требуют заголовок:
 
@@ -49,6 +52,16 @@ Authorization: Bearer <AI_SERVICE_TOKEN>
 ```
 
 В Swagger UI этот токен вводится через схему `serviceBearerAuth`.
+
+Админские ручки каталога спонсоров доступны только пользователям с permission `sponsors.manage`:
+
+- `GET /sponsor-products`
+- `GET /sponsor-products/{id}`
+- `POST /sponsor-products`
+- `PATCH /sponsor-products/{id}`
+- `DELETE /sponsor-products/{id}`
+
+Seed назначает `sponsors.manage` роли `admin`, потому что admin получает все permission из enum `Permission`.
 
 ## Данные
 
@@ -60,7 +73,9 @@ PostgreSQL хранит структурированные сущности:
 - `UserEvent` - личные события пользователя, созданные AI-бэком.
 - `Todo` - действия, которые видит пользователь.
 - `Reminder` - напоминания, которые видит пользователь.
+- `SponsorProduct` - каталог спонсорских товаров: описание, реферальная ссылка, спонсор, категория, теги и metadata.
 - `SponsorOffer` - спонсорские предложения, связанные с событием или todo.
+- `SponsorSuggestion` - результат контекстного рекламного выбора AI для конкретного пользователя.
 - `CoupleLink` - техническая модель связи пары. На текущей публичной поверхности она не открыта пользователю.
 
 MongoDB хранит AI-профиль пользователя:
@@ -139,6 +154,8 @@ npm run build
 
 - Новые пользовательские ручки не должны давать пользователю возможность менять AI-память, события, todo, reminders или sponsor-предложения.
 - Если ручка меняет AI-контекст, она должна жить под `/ai-service/*` и использовать `@Security('serviceBearerAuth')`.
+- Каталог спонсорских товаров не должен быть публичным. Управление каталогом требует `sponsors.manage`; AI получает только active товары через `/ai-service/sponsor-context`.
+- AI выбирает товар из sponsor context по `id` и создает `SponsorSuggestion` для пользователя. Мобильное приложение не выбирает рекламный товар само.
 - Если мобильному приложению нужно показать данные, добавляется read-only endpoint с `cookieAuth`.
 - Любые данные должны быть scoped by `userId`; AI-бэк передает `userId` явно в path.
 - Soft-delete используется для событий и todo, чтобы AI-контекст не терял историю.

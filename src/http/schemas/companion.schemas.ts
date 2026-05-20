@@ -37,6 +37,7 @@ const isoDateSchema = z.string().datetime({ offset: true });
 const metadataSchema = z.record(z.unknown());
 
 export const sponsorOfferSchema = z.object({
+    productId: z.string().uuid().optional(),
     title: z.string().min(1).max(300),
     description: z.string().max(2_000).optional(),
     url: z.string().url().max(2_000).optional(),
