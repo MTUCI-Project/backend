@@ -19,6 +19,13 @@ function readBearerFallback(req: Request): string | null {
     return token || null;
 }
 
+function readBearerToken(req: Request): string | null {
+    const header = req.headers.authorization;
+    if (!header?.startsWith('Bearer ')) return null;
+    const token = header.slice('Bearer '.length).trim();
+    return token || null;
+}
+
 async function loadUserMinimal(userId: string) {
     return prisma.user.findUnique({
         where: { id: userId },
@@ -73,6 +80,17 @@ export async function expressAuthentication(
     securityName: string,
     scopes?: string[],
 ): Promise<Principal | undefined> {
+    if (securityName === 'serviceBearerAuth') {
+        const token = readBearerToken(req);
+        if (!token) {
+            throw apiError(401, 'UNAUTHORIZED', 'Missing service token');
+        }
+        if (token !== env.AI_SERVICE_TOKEN) {
+            throw apiError(401, 'UNAUTHORIZED', 'Invalid service token');
+        }
+        return { id: 'ai-service' };
+    }
+
     const token =
         readAccessTokenFromCookie(req) ??
         (env.NODE_ENV !== 'production' ? readBearerFallback(req) : null);

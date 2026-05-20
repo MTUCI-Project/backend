@@ -48,12 +48,66 @@
 				],
 				"type": "object"
 			},
-			"UserPublicDTO": {
+			"TodoStatusDTO": {
+				"type": "string",
+				"enum": [
+					"open",
+					"done",
+					"dismissed",
+					"cancelled"
+				]
+			},
+			"SourceDTO": {
+				"type": "string",
+				"enum": [
+					"user",
+					"ai",
+					"system"
+				]
+			},
+			"SponsorOfferStatusDTO": {
+				"type": "string",
+				"enum": [
+					"proposed",
+					"accepted",
+					"dismissed",
+					"expired"
+				]
+			},
+			"SponsorOfferDTO": {
 				"properties": {
+					"updatedAt": {
+						"type": "string"
+					},
 					"createdAt": {
 						"type": "string"
 					},
-					"username": {
+					"metadata": {},
+					"status": {
+						"$ref": "#/components/schemas/SponsorOfferStatusDTO"
+					},
+					"placement": {
+						"type": "string"
+					},
+					"sponsorName": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"todoId": {
+						"type": "string"
+					},
+					"eventId": {
+						"type": "string"
+					},
+					"userId": {
 						"type": "string"
 					},
 					"id": {
@@ -61,9 +115,183 @@
 					}
 				},
 				"required": [
+					"updatedAt",
 					"createdAt",
-					"username",
+					"metadata",
+					"status",
+					"placement",
+					"sponsorName",
+					"title",
+					"userId",
 					"id"
+				],
+				"type": "object"
+			},
+			"ReminderStatusDTO": {
+				"type": "string",
+				"enum": [
+					"scheduled",
+					"sent",
+					"dismissed",
+					"done",
+					"cancelled"
+				]
+			},
+			"ReminderChannelDTO": {
+				"type": "string",
+				"enum": [
+					"push",
+					"in_app",
+					"email"
+				]
+			},
+			"ReminderDTO": {
+				"properties": {
+					"updatedAt": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"source": {
+						"$ref": "#/components/schemas/SourceDTO"
+					},
+					"payload": {},
+					"channel": {
+						"$ref": "#/components/schemas/ReminderChannelDTO"
+					},
+					"status": {
+						"$ref": "#/components/schemas/ReminderStatusDTO"
+					},
+					"triggerAt": {
+						"type": "string"
+					},
+					"todoId": {
+						"type": "string"
+					},
+					"eventId": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"updatedAt",
+					"createdAt",
+					"source",
+					"payload",
+					"channel",
+					"status",
+					"triggerAt",
+					"userId",
+					"id"
+				],
+				"type": "object"
+			},
+			"TodoDTO": {
+				"properties": {
+					"updatedAt": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"reminders": {
+						"items": {
+							"$ref": "#/components/schemas/ReminderDTO"
+						},
+						"type": "array"
+					},
+					"sponsorOffers": {
+						"items": {
+							"$ref": "#/components/schemas/SponsorOfferDTO"
+						},
+						"type": "array"
+					},
+					"metadata": {},
+					"source": {
+						"$ref": "#/components/schemas/SourceDTO"
+					},
+					"dueAt": {
+						"type": "string"
+					},
+					"status": {
+						"$ref": "#/components/schemas/TodoStatusDTO"
+					},
+					"title": {
+						"type": "string"
+					},
+					"eventId": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"updatedAt",
+					"createdAt",
+					"reminders",
+					"sponsorOffers",
+					"metadata",
+					"source",
+					"status",
+					"title",
+					"userId",
+					"id"
+				],
+				"type": "object"
+			},
+			"OnboardingAnswerDTO": {
+				"properties": {
+					"updatedAt": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"source": {
+						"$ref": "#/components/schemas/SourceDTO"
+					},
+					"answer": {},
+					"questionKey": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"updatedAt",
+					"createdAt",
+					"source",
+					"answer",
+					"questionKey",
+					"userId",
+					"id"
+				],
+				"type": "object"
+			},
+			"UpsertOnboardingAnswerBodyDTO": {
+				"properties": {
+					"answer": {},
+					"questionKey": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"answer",
+					"questionKey"
 				],
 				"type": "object"
 			},
@@ -148,6 +376,406 @@
 					"status"
 				],
 				"type": "object"
+			},
+			"UserEventDTO": {
+				"properties": {
+					"updatedAt": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"todos": {
+						"items": {
+							"$ref": "#/components/schemas/TodoDTO"
+						},
+						"type": "array"
+					},
+					"reminders": {
+						"items": {
+							"$ref": "#/components/schemas/ReminderDTO"
+						},
+						"type": "array"
+					},
+					"sponsorOffers": {
+						"items": {
+							"$ref": "#/components/schemas/SponsorOfferDTO"
+						},
+						"type": "array"
+					},
+					"metadata": {},
+					"source": {
+						"$ref": "#/components/schemas/SourceDTO"
+					},
+					"timezone": {
+						"type": "string"
+					},
+					"eventAt": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"updatedAt",
+					"createdAt",
+					"todos",
+					"reminders",
+					"sponsorOffers",
+					"metadata",
+					"source",
+					"title",
+					"userId",
+					"id"
+				],
+				"type": "object"
+			},
+			"AiUserContextDTO": {
+				"properties": {
+					"reminders": {
+						"items": {
+							"$ref": "#/components/schemas/ReminderDTO"
+						},
+						"type": "array"
+					},
+					"todos": {
+						"items": {
+							"$ref": "#/components/schemas/TodoDTO"
+						},
+						"type": "array"
+					},
+					"events": {
+						"items": {
+							"$ref": "#/components/schemas/UserEventDTO"
+						},
+						"type": "array"
+					},
+					"onboardingAnswers": {
+						"items": {
+							"$ref": "#/components/schemas/OnboardingAnswerDTO"
+						},
+						"type": "array"
+					},
+					"profile": {},
+					"userId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"reminders",
+					"todos",
+					"events",
+					"onboardingAnswers",
+					"profile",
+					"userId"
+				],
+				"type": "object"
+			},
+			"UserAiProfileFactDTO": {
+				"properties": {
+					"updatedAt": {
+						"type": "string"
+					},
+					"confidence": {
+						"type": "number",
+						"format": "double"
+					},
+					"source": {
+						"type": "string"
+					},
+					"value": {},
+					"key": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"updatedAt",
+					"value",
+					"key"
+				],
+				"type": "object"
+			},
+			"Record_string.unknown_": {
+				"properties": {},
+				"additionalProperties": {},
+				"type": "object",
+				"description": "Construct a type with a set of properties K of type T"
+			},
+			"UserAiProfileDTO": {
+				"properties": {
+					"updatedAt": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"metadata": {
+						"$ref": "#/components/schemas/Record_string.unknown_"
+					},
+					"facts": {
+						"items": {
+							"$ref": "#/components/schemas/UserAiProfileFactDTO"
+						},
+						"type": "array"
+					},
+					"summary": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"metadata",
+					"facts",
+					"userId"
+				],
+				"type": "object"
+			},
+			"UpsertAiProfileFactBodyDTO": {
+				"properties": {
+					"confidence": {
+						"type": "number",
+						"format": "double"
+					},
+					"source": {
+						"type": "string"
+					},
+					"value": {}
+				},
+				"required": [
+					"value"
+				],
+				"type": "object"
+			},
+			"AiProfileFactInputDTO": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/UpsertAiProfileFactBodyDTO"
+					},
+					{
+						"properties": {
+							"key": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"key"
+						],
+						"type": "object"
+					}
+				]
+			},
+			"AiServiceFactsBodyDTO": {
+				"properties": {
+					"facts": {
+						"items": {
+							"$ref": "#/components/schemas/AiProfileFactInputDTO"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"facts"
+				],
+				"type": "object"
+			},
+			"UpdateAiProfileBodyDTO": {
+				"properties": {
+					"metadata": {
+						"$ref": "#/components/schemas/Record_string.unknown_"
+					},
+					"summary": {
+						"type": "string"
+					}
+				},
+				"type": "object"
+			},
+			"SponsorOfferBodyDTO": {
+				"properties": {
+					"metadata": {
+						"$ref": "#/components/schemas/Record_string.unknown_"
+					},
+					"placement": {
+						"type": "string"
+					},
+					"sponsorName": {
+						"type": "string"
+					},
+					"url": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"placement",
+					"sponsorName",
+					"title"
+				],
+				"type": "object"
+			},
+			"ReminderBodyDTO": {
+				"properties": {
+					"payload": {
+						"$ref": "#/components/schemas/Record_string.unknown_"
+					},
+					"channel": {
+						"$ref": "#/components/schemas/ReminderChannelDTO"
+					},
+					"triggerAt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"triggerAt"
+				],
+				"type": "object"
+			},
+			"TodoBodyDTO": {
+				"properties": {
+					"reminders": {
+						"items": {
+							"$ref": "#/components/schemas/ReminderBodyDTO"
+						},
+						"type": "array"
+					},
+					"sponsorOffer": {
+						"$ref": "#/components/schemas/SponsorOfferBodyDTO"
+					},
+					"metadata": {
+						"$ref": "#/components/schemas/Record_string.unknown_"
+					},
+					"dueAt": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"title"
+				],
+				"type": "object"
+			},
+			"CreateEventBodyDTO": {
+				"properties": {
+					"reminders": {
+						"items": {
+							"$ref": "#/components/schemas/ReminderBodyDTO"
+						},
+						"type": "array"
+					},
+					"todos": {
+						"items": {
+							"$ref": "#/components/schemas/TodoBodyDTO"
+						},
+						"type": "array"
+					},
+					"sponsorOffer": {
+						"$ref": "#/components/schemas/SponsorOfferBodyDTO"
+					},
+					"metadata": {
+						"$ref": "#/components/schemas/Record_string.unknown_"
+					},
+					"timezone": {
+						"type": "string"
+					},
+					"eventAt": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"title"
+				],
+				"type": "object"
+			},
+			"UpdateEventBodyDTO": {
+				"properties": {
+					"metadata": {
+						"$ref": "#/components/schemas/Record_string.unknown_"
+					},
+					"timezone": {
+						"type": "string",
+						"nullable": true
+					},
+					"eventAt": {
+						"type": "string",
+						"nullable": true
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"type": "object"
+			},
+			"CreateTodoBodyDTO": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/TodoBodyDTO"
+					},
+					{
+						"properties": {
+							"eventId": {
+								"type": "string"
+							}
+						},
+						"type": "object"
+					}
+				]
+			},
+			"UpdateTodoBodyDTO": {
+				"properties": {
+					"metadata": {
+						"$ref": "#/components/schemas/Record_string.unknown_"
+					},
+					"dueAt": {
+						"type": "string",
+						"nullable": true
+					},
+					"status": {
+						"$ref": "#/components/schemas/TodoStatusDTO"
+					},
+					"title": {
+						"type": "string"
+					}
+				},
+				"type": "object"
+			},
+			"UpdateReminderBodyDTO": {
+				"properties": {
+					"status": {
+						"$ref": "#/components/schemas/ReminderStatusDTO"
+					}
+				},
+				"required": [
+					"status"
+				],
+				"type": "object"
 			}
 		},
 		"securitySchemes": {
@@ -160,6 +788,10 @@
 				"type": "apiKey",
 				"in": "cookie",
 				"name": "accessToken"
+			},
+			"serviceBearerAuth": {
+				"type": "http",
+				"scheme": "bearer"
 			}
 		}
 	},
@@ -198,40 +830,127 @@
 				"parameters": []
 			}
 		},
-		"/users/{id}": {
+		"/todos": {
 			"get": {
-				"operationId": "GetUserPublic",
+				"operationId": "List",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/UserPublicDTO"
+									"items": {
+										"$ref": "#/components/schemas/TodoDTO"
+									},
+									"type": "array"
 								}
 							}
 						}
 					}
 				},
-				"description": "GET /users/:id\npublic profile, viewer-aware",
 				"tags": [
-					"Users"
+					"Todos"
 				],
 				"security": [
 					{
-						"optionalCookieAuth": []
+						"cookieAuth": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
+				"parameters": []
+			}
+		},
+		"/reminders": {
+			"get": {
+				"operationId": "List",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/ReminderDTO"
+									},
+									"type": "array"
+								}
+							}
 						}
 					}
-				]
+				},
+				"tags": [
+					"Reminders"
+				],
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/onboarding/answers": {
+			"post": {
+				"operationId": "UpsertAnswer",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OnboardingAnswerDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Onboarding"
+				],
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpsertOnboardingAnswerBodyDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/onboarding/answers/me": {
+			"get": {
+				"operationId": "ListMe",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/OnboardingAnswerDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Onboarding"
+				],
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"parameters": []
 			}
 		},
 		"/auth/register": {
@@ -424,6 +1143,505 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/ai-service/users/{userId}/context": {
+			"get": {
+				"operationId": "GetContext",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AiUserContextDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/ai-service/users/{userId}/facts": {
+			"post": {
+				"operationId": "UpsertFacts",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserAiProfileDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AiServiceFactsBodyDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/ai-service/users/{userId}/profile": {
+			"patch": {
+				"operationId": "UpdateProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserAiProfileDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateAiProfileBodyDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/ai-service/users/{userId}/facts/{key}": {
+			"delete": {
+				"operationId": "DeleteFact",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserAiProfileDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "key",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/ai-service/users/{userId}/events": {
+			"post": {
+				"operationId": "CreateEvent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserEventDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateEventBodyDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/ai-service/users/{userId}/events/{id}": {
+			"patch": {
+				"operationId": "UpdateEvent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserEventDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateEventBodyDTO"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteEvent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OkDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/ai-service/users/{userId}/todos": {
+			"post": {
+				"operationId": "CreateTodo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TodoDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateTodoBodyDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/ai-service/users/{userId}/todos/{id}": {
+			"patch": {
+				"operationId": "UpdateTodo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TodoDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateTodoBodyDTO"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteTodo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OkDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/ai-service/users/{userId}/reminders/{id}": {
+			"patch": {
+				"operationId": "UpdateReminder",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ReminderDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"AI Service"
+				],
+				"security": [
+					{
+						"serviceBearerAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateReminderBodyDTO"
+							}
+						}
+					}
+				}
 			}
 		}
 	},

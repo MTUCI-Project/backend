@@ -161,3 +161,33 @@ export async function addOrUpdateUserAiProfileFact(
 
     return profile;
 }
+
+export async function deleteUserAiProfileFact(
+    userId: string,
+    key: string,
+): Promise<UserAiProfileDocument> {
+    const col = await collection();
+    const now = new Date();
+
+    await col.updateOne(
+        { userId },
+        {
+            $pull: { facts: { key } as Document },
+            $setOnInsert: {
+                userId,
+                metadata: {},
+                createdAt: now,
+            },
+            $set: { updatedAt: now },
+        },
+        { upsert: true },
+    );
+
+    const profile = withoutMongoId(await col.findOne({ userId }));
+    if (!profile) {
+        throw new Error('Failed to delete user AI profile fact');
+    }
+
+    logger.info({ userId, factKey: key }, 'Deleted user AI profile fact');
+    return profile;
+}
