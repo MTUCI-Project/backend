@@ -46,7 +46,7 @@ async function upsertRole(params: {
 }
 
 async function ensurePermissions() {
-    const keys = Object.values(Permissions);
+    const keys = Object.values(Permission);
 
     // создаём permission записи (если уже есть — пропускаем)
     await prisma.permission.createMany({
@@ -119,7 +119,7 @@ async function main() {
     });
 
     // 3) role -> permissions
-    const allPerms = Object.values(Permissions);
+    const allPerms = Object.values(Permission);
 
     await setRolePermissions(adminRole.id, allPerms, permIdByKey);
 

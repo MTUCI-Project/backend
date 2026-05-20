@@ -2,12 +2,14 @@ import { createApp } from './app';
 import { env } from './config/env';
 import { logger } from './config/logger';
 import { prisma } from './lib/prisma';
+import { disconnectMongo, ensureMongoConnection } from './lib/mongo';
 import { ensureBucket } from './lib/minio';
 
 const app = createApp();
 
 async function start() {
     await ensureBucket();
+    await ensureMongoConnection();
 
     const server = app.listen(env.PORT, () => {
         logger.info({ port: env.PORT, env: env.NODE_ENV }, 'Server started');
@@ -30,6 +32,13 @@ async function start() {
                 logger.info('Prisma disconnected');
             } catch (err) {
                 logger.error({ err }, 'Failed to disconnect Prisma');
+            }
+
+            try {
+                await disconnectMongo();
+                logger.info('MongoDB disconnected');
+            } catch (err) {
+                logger.error({ err }, 'Failed to disconnect MongoDB');
             } finally {
                 // Give streams a moment to flush
                 setTimeout(() => process.exit(0), 50).unref();

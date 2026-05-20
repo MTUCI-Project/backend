@@ -1,5 +1,6 @@
 import express from 'express';
 import pinoHttp from 'pino-http';
+import type { IncomingHttpHeaders } from 'node:http';
 import 'reflect-metadata';
 
 import cookieParser from 'cookie-parser';
@@ -14,6 +15,23 @@ import { errorMiddleware } from './http/middlewares/error.middleware';
 import { RegisterRoutes } from './generated/routes';
 import swaggerSpec from './generated/swagger.json';
 
+function shouldIgnoreHttpLog(url?: string) {
+    if (!url) return false;
+    return (
+        url === '/health' ||
+        url === '/healthz' ||
+        (env.NODE_ENV === 'production' && url.startsWith('/docs'))
+    );
+}
+
+function serializeHeaders(headers: IncomingHttpHeaders) {
+    if (env.NODE_ENV === 'production') {
+        return undefined;
+    }
+
+    return headers;
+}
+
 export function createApp() {
     const app = express();
 
@@ -27,24 +45,24 @@ export function createApp() {
             customLogLevel: (_req, res, err) => {
                 if (err || res.statusCode >= 500) return 'error';
                 if (res.statusCode >= 400) return 'warn';
+                if (env.NODE_ENV === 'production') return 'silent';
+                if (res.statusCode >= 300) return 'debug';
                 return 'info';
             },
             customProps: (req) => ({
                 requestId: (req as any).requestId,
                 userId: (req as any).user?.id,
-                userRole: (req as any).user?.role,
                 remoteAddress: req.socket?.remoteAddress,
             }),
             autoLogging: {
-                ignore: (req) =>
-                    req.url === '/health' || req.url === '/healthz',
+                ignore: (req) => shouldIgnoreHttpLog(req.url),
             },
             serializers: {
                 req(req) {
                     return {
                         method: req.method,
                         url: req.url,
-                        headers: req.headers,
+                        headers: serializeHeaders(req.headers),
                     };
                 },
                 res(res) {

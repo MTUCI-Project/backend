@@ -100,7 +100,7 @@ export class AuthController extends Controller {
             throw apiError(401, 'UNAUTHORIZED', 'Missing refresh token');
         }
 
-        let payload: { sub: string; role: any };
+        let payload: { sub: string };
         try {
             payload = verifyRefreshToken(refreshToken);
         } catch {
@@ -109,11 +109,9 @@ export class AuthController extends Controller {
 
         const newAccess = signAccessToken({
             sub: payload.sub,
-            role: payload.role,
         });
         const newRefresh = signRefreshToken({
             sub: payload.sub,
-            role: payload.role,
         });
 
         const res = this.mustGetRes(req);

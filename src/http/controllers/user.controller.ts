@@ -7,7 +7,7 @@ import { userIdParamsSchema } from '../schemas/user.schemas';
 
 import {
     getUserPublicById,
-    getUserRoleKeys,
+    getUserRbacContext,
     getUserSelf,
 } from '../../domain/users/user.service';
 
@@ -30,12 +30,11 @@ export class UsersController extends Controller {
         const user = await getUserSelf(req.user!.id);
         if (!user) throw apiError(401, 'UNAUTHORIZED', 'User not found');
 
-        const roles = await getUserRoleKeys(req.user!.id);
+        const rbac = await getUserRbacContext(req.user!.id);
 
         return toUserSelfDTO({
             ...user,
-            roles,
-            permissions: req.user?.permissions ?? [],
+            ...rbac,
         });
     }
 

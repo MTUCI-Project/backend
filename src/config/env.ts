@@ -11,7 +11,7 @@ const EnvSchema = z.object({
     PORT: z.coerce.number().int().positive().max(65535).default(3000),
     LOG_LEVEL: z
         .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
-        .default('info'),
+        .optional(),
 
     // ===== Logging =====
     LOG_DIR: z.string().default('./logs'),
@@ -32,6 +32,13 @@ const EnvSchema = z.object({
     LOG_MAX_FILES: z.coerce.number().int().positive().default(14),
 
     DATABASE_URL: z.string().min(1),
+
+    MONGODB_URL: z.string().min(1),
+    MONGODB_DB_NAME: z.string().min(1),
+    MONGODB_USER_AI_PROFILES_COLLECTION: z
+        .string()
+        .min(1)
+        .default('user_ai_profiles'),
 
     MINIO_ENDPOINT: z.string().min(1),
     MINIO_PORT: z.coerce.number().int().positive(),
@@ -63,4 +70,9 @@ if (!parsed.success) {
     process.exit(1);
 }
 
-export const env = parsed.data;
+export const env = {
+    ...parsed.data,
+    LOG_LEVEL:
+        parsed.data.LOG_LEVEL ??
+        (parsed.data.NODE_ENV === 'production' ? 'info' : 'debug'),
+};

@@ -59,3 +59,32 @@ export async function getUserRoleKeys(userId: string): Promise<string[]> {
 
     return rows.map((r) => r.role.key);
 }
+
+export async function getUserPermissionKeys(userId: string): Promise<string[]> {
+    const rows = await prisma.permission.findMany({
+        where: {
+            roles: {
+                some: {
+                    role: {
+                        assignments: { some: { userId } },
+                    },
+                },
+            },
+        },
+        select: { key: true },
+    });
+
+    return Array.from(new Set(rows.map((r) => r.key)));
+}
+
+export async function getUserRbacContext(userId: string): Promise<{
+    roles: string[];
+    permissions: string[];
+}> {
+    const [roles, permissions] = await Promise.all([
+        getUserRoleKeys(userId),
+        getUserPermissionKeys(userId),
+    ]);
+
+    return { roles, permissions };
+}

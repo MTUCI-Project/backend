@@ -63,17 +63,34 @@ const baseOptions: LoggerOptions = {
     level: env.LOG_LEVEL,
     base: undefined,
     timestamp: pino.stdTimeFunctions.isoTime,
+    messageKey: 'message',
     redact: {
         paths: [
+            'password',
+            '*.password',
+            'req.body.password',
+            'body.password',
             'req.headers.authorization',
             'req.headers.cookie',
             'req.headers["set-cookie"]',
             'headers.authorization',
             'headers.cookie',
             'headers["set-cookie"]',
+            'accessToken',
+            'refreshToken',
+            '*.accessToken',
+            '*.refreshToken',
+            '*.token',
+            '*.secret',
+            '*.passwordHash',
         ],
         censor: '[REDACTED]',
         remove: false,
+    },
+    formatters: {
+        level(label) {
+            return { level: label };
+        },
     },
 };
 
