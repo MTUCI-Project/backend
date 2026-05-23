@@ -112,6 +112,8 @@ AI_SERVICE_TOKEN=local-ai-service-token-change-me
 npm run docker
 ```
 
+Это поднимет PostgreSQL, MongoDB, MinIO и Adminer из [docker/docker-compose.dev.yml](docker/docker-compose.dev.yml).
+
 Применить миграции:
 
 ```bash
@@ -129,6 +131,20 @@ Swagger UI доступен в development на:
 ```text
 http://localhost:3000/docs
 ```
+
+## Docker для production
+
+Для сборки backend-контейнера используется [Dockerfile](Dockerfile). Он собирает TypeScript, генерирует Prisma client и запускает `dist/server.js`.
+
+GPU проброшен на уровне compose-файла [docker/docker-compose.prod.yml](docker/docker-compose.prod.yml) через `gpus: all` и переменные `NVIDIA_VISIBLE_DEVICES` / `NVIDIA_DRIVER_CAPABILITIES`.
+
+Команда запуска:
+
+```bash
+docker compose -f docker/docker-compose.prod.yml up --build -d
+```
+
+Важно: сейчас backend не содержит CUDA-кода. GPU-проброс сделан как инфраструктурная готовность для будущих GPU-зависимых библиотек или сервисов.
 
 ## Генерация и проверки
 
