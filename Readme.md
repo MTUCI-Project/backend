@@ -184,9 +184,7 @@ http://localhost:3000/docs
 
 ## Docker для production
 
-Для сборки backend-контейнера используется [Dockerfile](Dockerfile). Он собирает TypeScript, генерирует Prisma client и запускает `dist/server.js`.
-
-Файл [docker/docker-compose.prod.yml](docker/docker-compose.prod.yml) поднимает backend-контейнер без монтирования исходников и подключает его к тем же зависимостям по именам сервисов: `postgres`, `mongo`, `minio`.
+[docker/docker-compose.prod.yml](docker/docker-compose.prod.yml) поднимает backend-контейнер без монтирования исходников и подключает его к тем же зависимостям по именам сервисов: `postgres`, `mongo`, `minio`.
 
 GPU проброшен на уровне compose-файла через NVIDIA device reservation и переменные `NVIDIA_VISIBLE_DEVICES` / `NVIDIA_DRIVER_CAPABILITIES`.
 
@@ -238,3 +236,5 @@ npm run build
 - Если мобильному приложению нужно показать данные, добавляется read-only endpoint с `cookieAuth`.
 - Любые данные должны быть scoped by `userId`; AI-бэк передает `userId` явно в path.
 - Soft-delete используется для событий и todo, чтобы AI-контекст не терял историю.
+
+
