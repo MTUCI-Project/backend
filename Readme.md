@@ -114,6 +114,101 @@ npm run docker
 
 Это поднимет PostgreSQL, MongoDB, MinIO и Adminer из [docker/docker-compose.dev.yml](docker/docker-compose.dev.yml).
 
+### Что должно быть на хосте
+
+Для локального запуска:
+
+- Docker Engine или Docker Desktop с `docker compose` v2.
+- Доступ к Docker Hub, чтобы скачались базовые образы `node`, `postgres`, `mongo`, `minio` и `adminer`.
+- Свободные порты `3000`, `5432`, `27017`, `8080`, `9000`, `9001`.
+
+### Пошаговый запуск на хосте
+
+1. Установить Docker Desktop или Docker Engine с поддержкой `docker compose` v2.
+2. Проверить, что Docker умеет скачивать образы:
+
+```bash
+docker pull node:22-bookworm-slim
+```
+
+3. Если на хосте нужен GPU, проверить драйвер командой `nvidia-smi`.
+4. Убедиться, что свободны порты `3000`, `5432`, `27017`, `8080`, `9000`, `9001`.
+5. Открыть `backend/.env` и проверить, что там стоят локальные dev-значения.
+6. Поднять инфраструктуру:
+
+```powershell
+cd C:\Users\xeniy\MTUCI-Project\backend
+docker compose -f docker/docker-compose.dev.yml up -d
+```
+
+7. Дождаться, пока запустятся PostgreSQL, MongoDB, MinIO и Adminer.
+8. Запустить backend:
+
+```powershell
+npm run dev
+```
+
+9. Проверить, что backend жив:
+
+```powershell
+Invoke-RestMethod http://localhost:31000/health
+```
+
+10. Если надо посмотреть базу вручную, открыть Adminer на `http://localhost:8080`.
+
+Для GPU:
+
+- На Linux должен быть установлен NVIDIA driver и `nvidia-container-toolkit`.
+- На Windows должен быть установлен NVIDIA driver с поддержкой WSL2, а Docker Desktop должен работать через WSL2 backend.
+- Для проверки GPU должен проходить тест `docker run --rm --gpus all nvidia/cuda:12.2.0-base-ubuntu22.04 nvidia-smi`.
+
+### dev compose
+
+[docker/docker-compose.dev.yml](docker/docker-compose.dev.yml) для локальной разработки:
+
+- `postgres` - база данных PostgreSQL.
+- `mongo` - хранилище AI-профиля пользователя.
+- `minio` - объектное хранилище для файлов.
+- `adminer` - веб-интерфейс для просмотра PostgreSQL.
+
+### Зачем нужны миграции
+
+Миграции нужны, чтобы схема PostgreSQL у всех была одинаковой и соответствовала Prisma schema в коде.
+
+Когда меняется структура моделей, недостаточно просто поменять `schema.prisma`. Нужно применить изменение в саму базу. Иначе бывает так:
+
+- код ожидает колонку, которой нет;
+- у разных людей локальная БД отличается по структуре;
+- backend падает на старте или работает с ошибками.
+
+Основная команда для разработки:
+
+```powershell
+npx prisma migrate dev
+```
+
+Если нужна только генерация Prisma client без изменения схемы базы:
+
+```powershell
+npx prisma generate
+```
+
+Если надо просто посмотреть таблицы и данные:
+
+```powershell
+npx prisma studio
+```
+
+### Что значит "без монтирования исходников"
+
+В dev-контейнере или при обычной разработке код лежит на диске и может меняться на лету. В prod-контейнере исходники не монтируются volume mount-ом с хоста: контейнер работает только с тем, что уже попало в image на этапе `docker build`.
+
+Это нужно, чтобы проверить именно продовый сценарий:
+
+- контейнер не зависит от локальной папки `src`;
+- поведение одинаковое на любой машине с тем же образом;
+- исключается ситуация "локально работает, в контейнере нет".
+
 Применить миграции:
 
 ```bash
@@ -136,7 +231,9 @@ http://localhost:3000/docs
 
 Для сборки backend-контейнера используется [Dockerfile](Dockerfile). Он собирает TypeScript, генерирует Prisma client и запускает `dist/server.js`.
 
-GPU проброшен на уровне compose-файла [docker/docker-compose.prod.yml](docker/docker-compose.prod.yml) через `gpus: all` и переменные `NVIDIA_VISIBLE_DEVICES` / `NVIDIA_DRIVER_CAPABILITIES`.
+Файл [docker/docker-compose.prod.yml](docker/docker-compose.prod.yml) поднимает backend-контейнер без монтирования исходников и подключает его к тем же зависимостям по именам сервисов: `postgres`, `mongo`, `minio`.
+
+GPU проброшен на уровне compose-файла через NVIDIA device reservation и переменные `NVIDIA_VISIBLE_DEVICES` / `NVIDIA_DRIVER_CAPABILITIES`.
 
 Команда запуска:
 
@@ -144,7 +241,18 @@ GPU проброшен на уровне compose-файла [docker/docker-compo
 docker compose -f docker/docker-compose.prod.yml up --build -d
 ```
 
-Важно: сейчас backend не содержит CUDA-кода. GPU-проброс сделан как инфраструктурная готовность для будущих GPU-зависимых библиотек или сервисов.
+### Docker
+
+```bash
+docker ps
+docker compose -f docker/docker-compose.dev.yml ps
+docker compose -f docker/docker-compose.dev.yml logs -f
+docker logs mtuici-pr
+docker stop mtuici-pr
+docker compose -f docker/docker-compose.dev.yml down
+```
+
+Важно: сейчас backend не содержит CUDA-кода. GPU-проброс сделан как инфраструктурная готовность.
 
 ## Генерация и проверки
 
