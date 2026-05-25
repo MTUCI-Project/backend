@@ -2,17 +2,17 @@
 
 Этот сервис отвечает за аккаунты пользователей, авторизацию, хранение пользовательского контекста для AI-бэка и выдачу минимальных данных мобильному приложению.
 
-Проект построен на Express, tsoa, Prisma/PostgreSQL, MongoDB и MinIO.
+Проект построен на Express, tsoa, Prisma/PostgreSQL и MinIO.
 
 ## Роли сервисов
 
 - Мобильное приложение работает с пользовательской cookie/JWT-авторизацией.
-- AI-бэк работает только через service-to-service Bearer token.
+- AI-бэк обращается к ручкам `/ai-service/*` без service-to-service авторизации.
 - Этот бэк хранит данные пользователя и является единственным источником правды для onboarding, AI-памяти, событий, todo и reminders.
 
 ## Политика доступа
 
-Главное правило: пользователь не может напрямую читать, добавлять или изменять AI-память о себе. Память, события, todo/reminders mutations и sponsor-предложения доступны только AI-бэку по Bearer token.
+Ручки `/ai-service/*` предназначены для интеграции с AI-бэком. Пользовательские сценарии мобильного приложения используют отдельные cookie/JWT-ручки.
 
 Пользователю доступны только:
 
@@ -45,14 +45,6 @@ AI-бэку доступны ручки:
 - `POST /ai-service/users/{userId}/sponsor-suggestions`
 - `PATCH /ai-service/users/{userId}/sponsor-suggestions/{id}`
 
-Все `/ai-service/*` ручки требуют заголовок:
-
-```http
-Authorization: Bearer <AI_SERVICE_TOKEN>
-```
-
-В Swagger UI этот токен вводится через схему `serviceBearerAuth`.
-
 Админские ручки каталога спонсоров доступны только пользователям с permission `sponsors.manage`:
 
 - `GET /sponsor-products`
@@ -78,13 +70,13 @@ PostgreSQL хранит структурированные сущности:
 - `SponsorSuggestion` - результат контекстного рекламного выбора AI для конкретного пользователя.
 - `CoupleLink` - техническая модель связи пары. На текущей публичной поверхности она не открыта пользователю.
 
-MongoDB хранит AI-профиль пользователя:
+PostgreSQL также хранит контекст AI-сервиса:
 
-- `summary` - сжатое описание контекста пользователя.
-- `facts[]` - нормализованные факты.
-- `metadata` - дополнительный машинный контекст.
+- `AiServiceState` - профиль и нормализованные факты пользователя.
+- `AiServiceEvent`, `AiServiceTodo`, `AiServiceReminder` - действия и напоминания AI-бэка.
+- `AiServiceSponsorSuggestion`, `AiServiceChatMessage` - рекомендации и история сообщений.
 
-Мобильное приложение не имеет прямых ручек к MongoDB AI-профилю.
+Мобильное приложение не имеет прямых ручек для изменения AI-контекста.
 
 ## Переменные окружения
 
@@ -92,14 +84,15 @@ MongoDB хранит AI-профиль пользователя:
 
 ```env
 DATABASE_URL=postgresql://admin:admin123@localhost:5432/db?schema=public
-MONGODB_URL=mongodb://admin:admin123@localhost:27017/db?authSource=admin
-MONGODB_DB_NAME=db
-MONGODB_USER_AI_PROFILES_COLLECTION=user_ai_profiles
+
+MINIO_ENDPOINT=localhost
+MINIO_PORT=9000
+MINIO_ACCESS_KEY=admin
+MINIO_SECRET_KEY=admin123
+MINIO_BUCKET=media
 
 JWT_SECRET=super-secret-dev-key-with-32-symbols
 JWT_REFRESH_SECRET=super-secret-refresh-dev-key-with-32-symbols
-
-AI_SERVICE_TOKEN=local-ai-service-token-change-me
 ```
 
 Полный пример находится в `.env.example`.
@@ -111,6 +104,50 @@ AI_SERVICE_TOKEN=local-ai-service-token-change-me
 ```bash
 npm run docker
 ```
+
+Это поднимет PostgreSQL, MinIO и Adminer из [docker/docker-compose.dev.yml](docker/docker-compose.dev.yml).
+
+
+### Запуск на хосте
+
+1. Установить Docker Desktop или Docker Engine с поддержкой `docker compose` v2.
+2. Проверить, что Docker умеет скачивать образы:
+
+```bash
+docker pull node:22-bookworm-slim
+```
+
+3. Убедиться, что свободны порты `3000`, `5432`, `8080`, `9000`, `9001`.
+4. Создать `.env` на основе `.env.example` и проверить локальные dev-значения.
+5. Поднять инфраструктуру:
+
+```powershell
+docker compose -f docker/docker-compose.dev.yml up -d
+```
+
+6. Дождаться, пока запустятся PostgreSQL, MinIO и Adminer.
+7. Запустить backend:
+
+```powershell
+npm run dev
+```
+
+8. Проверить, что backend жив:
+
+```powershell
+Invoke-RestMethod http://localhost:3000/health
+```
+
+9. Если надо посмотреть базу вручную, открыть Adminer на `http://localhost:8080`.
+
+### dev compose
+
+[docker/docker-compose.dev.yml](docker/docker-compose.dev.yml) для локальной разработки:
+
+- `postgres` - база данных PostgreSQL.
+- `minio` - объектное хранилище для файлов.
+- `adminer` - веб-интерфейс для просмотра PostgreSQL.
+
 
 Применить миграции:
 
@@ -128,6 +165,27 @@ Swagger UI доступен в development на:
 
 ```text
 http://localhost:3000/docs
+```
+
+## Docker для production
+
+[docker/docker-compose.prod.yml](docker/docker-compose.prod.yml) поднимает backend-контейнер без монтирования исходников и подключает его к зависимостям по именам сервисов: `postgres`, `minio`.
+
+Команда запуска:
+
+```bash
+docker compose -f docker/docker-compose.prod.yml up --build -d
+```
+
+### Docker
+
+```bash
+docker ps
+docker compose -f docker/docker-compose.dev.yml ps
+docker compose -f docker/docker-compose.dev.yml logs -f
+docker logs mtuci-backend
+docker stop mtuci-backend
+docker compose -f docker/docker-compose.dev.yml down
 ```
 
 ## Генерация и проверки
@@ -153,7 +211,7 @@ npm run build
 ## Правила разработки API
 
 - Новые пользовательские ручки не должны давать пользователю возможность менять AI-память, события, todo, reminders или sponsor-предложения.
-- Если ручка меняет AI-контекст, она должна жить под `/ai-service/*` и использовать `@Security('serviceBearerAuth')`.
+- Ручки интеграции, изменяющие AI-контекст, должны жить под `/ai-service/*`.
 - Каталог спонсорских товаров не должен быть публичным. Управление каталогом требует `sponsors.manage`; AI получает только active товары через `/ai-service/sponsor-context`.
 - AI выбирает товар из sponsor context по `id` и создает `SponsorSuggestion` для пользователя. Мобильное приложение не выбирает рекламный товар само.
 - Если мобильному приложению нужно показать данные, добавляется read-only endpoint с `cookieAuth`.

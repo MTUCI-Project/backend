@@ -129,109 +129,114 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"password":{"dataType":"string","required":true},"username":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SponsorProductContextDTO": {
+    "AiSponsorContextDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"metadata":{"dataType":"any","required":true},"tags":{"dataType":"any","required":true},"category":{"dataType":"string"},"sponsorName":{"dataType":"string","required":true},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"available_partners":{"dataType":"array","array":{"dataType":"string"},"required":true},"message":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserEventDTO": {
+    "AiChatResponseDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"updatedAt":{"dataType":"string","required":true},"createdAt":{"dataType":"string","required":true},"todos":{"dataType":"array","array":{"dataType":"refAlias","ref":"TodoDTO"},"required":true},"reminders":{"dataType":"array","array":{"dataType":"refAlias","ref":"ReminderDTO"},"required":true},"sponsorOffers":{"dataType":"array","array":{"dataType":"refAlias","ref":"SponsorOfferDTO"},"required":true},"metadata":{"dataType":"any","required":true},"source":{"ref":"SourceDTO","required":true},"timezone":{"dataType":"string"},"eventAt":{"dataType":"string"},"description":{"dataType":"string"},"title":{"dataType":"string","required":true},"userId":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"message":{"dataType":"string","required":true},"status":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AiChatMessageBodyDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"sentiment":{"dataType":"double"},"message":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AiChatMessageDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"timestamp":{"dataType":"string","required":true},"sentiment":{"dataType":"double","required":true},"message":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AiEventDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"string","required":true},"date":{"dataType":"string","required":true},"description":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"title":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AiTodoDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"completed":{"dataType":"boolean","required":true},"due":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"text":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "AiReminderDTO": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"is_active":{"dataType":"boolean","required":true},"remind_at":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"text":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"id":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AiUserContextDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"reminders":{"dataType":"array","array":{"dataType":"refAlias","ref":"ReminderDTO"},"required":true},"todos":{"dataType":"array","array":{"dataType":"refAlias","ref":"TodoDTO"},"required":true},"events":{"dataType":"array","array":{"dataType":"refAlias","ref":"UserEventDTO"},"required":true},"onboardingAnswers":{"dataType":"array","array":{"dataType":"refAlias","ref":"OnboardingAnswerDTO"},"required":true},"profile":{"dataType":"any","required":true},"userId":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"current_time":{"dataType":"string","required":true},"weather":{"dataType":"string","required":true},"reminders":{"dataType":"array","array":{"dataType":"refAlias","ref":"AiReminderDTO"},"required":true},"todos":{"dataType":"array","array":{"dataType":"refAlias","ref":"AiTodoDTO"},"required":true},"events":{"dataType":"array","array":{"dataType":"refAlias","ref":"AiEventDTO"},"required":true},"facts":{"ref":"Record_string.unknown_","required":true},"profile":{"ref":"Record_string.unknown_","required":true},"user_id":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserAiProfileFactDTO": {
+    "AiStatusDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"updatedAt":{"dataType":"string","required":true},"confidence":{"dataType":"double"},"source":{"dataType":"string"},"value":{"dataType":"any","required":true},"key":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserAiProfileDTO": {
+    "AiFactBodyDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"updatedAt":{"dataType":"string"},"createdAt":{"dataType":"string"},"metadata":{"ref":"Record_string.unknown_","required":true},"facts":{"dataType":"array","array":{"dataType":"refAlias","ref":"UserAiProfileFactDTO"},"required":true},"summary":{"dataType":"string"},"userId":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"value":{"dataType":"any","required":true},"key":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpsertAiProfileFactBodyDTO": {
+    "AiFactResponseDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"confidence":{"dataType":"double"},"source":{"dataType":"string"},"value":{"dataType":"any","required":true}},"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"AiStatusDTO"},{"ref":"AiFactBodyDTO"}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AiProfileFactInputDTO": {
+    "AiDeletedFactResponseDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"UpsertAiProfileFactBodyDTO"},{"dataType":"nestedObjectLiteral","nestedProperties":{"key":{"dataType":"string","required":true}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"AiStatusDTO"},{"dataType":"nestedObjectLiteral","nestedProperties":{"key":{"dataType":"string","required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AiServiceFactsBodyDTO": {
+    "JsonObject": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"facts":{"dataType":"array","array":{"dataType":"refAlias","ref":"AiProfileFactInputDTO"},"required":true}},"validators":{}},
+        "type": {"ref":"Record_string.unknown_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateAiProfileBodyDTO": {
+    "AiEventBodyDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"metadata":{"ref":"Record_string.unknown_"},"summary":{"dataType":"string"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"dataType":"string"},"date":{"dataType":"string","required":true},"description":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"title":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SponsorOfferBodyDTO": {
+    "Partial_AiEventBodyDTO_": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"metadata":{"ref":"Record_string.unknown_"},"placement":{"dataType":"string","required":true},"sponsorName":{"dataType":"string","required":true},"url":{"dataType":"string"},"description":{"dataType":"string"},"title":{"dataType":"string","required":true},"productId":{"dataType":"string"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"title":{"dataType":"string"},"description":{"dataType":"string"},"date":{"dataType":"string"},"status":{"dataType":"string"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ReminderBodyDTO": {
+    "AiEventUpdateBodyDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"payload":{"ref":"Record_string.unknown_"},"channel":{"ref":"ReminderChannelDTO"},"triggerAt":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"ref":"Partial_AiEventBodyDTO_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TodoBodyDTO": {
+    "AiTodoBodyDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"reminders":{"dataType":"array","array":{"dataType":"refAlias","ref":"ReminderBodyDTO"}},"sponsorOffer":{"ref":"SponsorOfferBodyDTO"},"metadata":{"ref":"Record_string.unknown_"},"dueAt":{"dataType":"string"},"title":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"due":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"text":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateEventBodyDTO": {
+    "Partial_AiTodoBodyDTO_": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"reminders":{"dataType":"array","array":{"dataType":"refAlias","ref":"ReminderBodyDTO"}},"todos":{"dataType":"array","array":{"dataType":"refAlias","ref":"TodoBodyDTO"}},"sponsorOffer":{"ref":"SponsorOfferBodyDTO"},"metadata":{"ref":"Record_string.unknown_"},"timezone":{"dataType":"string"},"eventAt":{"dataType":"string"},"description":{"dataType":"string"},"title":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"text":{"dataType":"string"},"due":{"dataType":"string"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateEventBodyDTO": {
+    "AiTodoUpdateBodyDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"metadata":{"ref":"Record_string.unknown_"},"timezone":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"eventAt":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"description":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"title":{"dataType":"string"}},"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Partial_AiTodoBodyDTO_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"completed":{"dataType":"boolean"}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateTodoBodyDTO": {
+    "AiReminderUpdateBodyDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"TodoBodyDTO"},{"dataType":"nestedObjectLiteral","nestedProperties":{"eventId":{"dataType":"string"}}}],"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"is_active":{"dataType":"boolean"},"remind_at":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"text":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateTodoBodyDTO": {
+    "AiSponsorSuggestionBodyDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"metadata":{"ref":"Record_string.unknown_"},"dueAt":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"status":{"ref":"TodoStatusDTO"},"title":{"dataType":"string"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"partner_url":{"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},"price":{"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}]},"description":{"dataType":"string","required":true},"title":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateReminderBodyDTO": {
+    "AiSponsorSuggestionDTO": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"ref":"ReminderStatusDTO","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SponsorSuggestionStatusDTO": {
-        "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["pending"]},{"dataType":"enum","enums":["sent"]},{"dataType":"enum","enums":["dismissed"]},{"dataType":"enum","enums":["clicked"]},{"dataType":"enum","enums":["converted"]},{"dataType":"enum","enums":["expired"]}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SponsorSuggestionDTO": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"product":{"ref":"SponsorProductDTO"},"updatedAt":{"dataType":"string","required":true},"createdAt":{"dataType":"string","required":true},"deliveredAt":{"dataType":"string"},"metadata":{"dataType":"any","required":true},"status":{"ref":"SponsorSuggestionStatusDTO","required":true},"reason":{"dataType":"string"},"placement":{"dataType":"string","required":true},"message":{"dataType":"string"},"title":{"dataType":"string"},"reminderId":{"dataType":"string"},"todoId":{"dataType":"string"},"eventId":{"dataType":"string"},"productId":{"dataType":"string","required":true},"userId":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "CreateSponsorSuggestionBodyDTO": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"metadata":{"ref":"Record_string.unknown_"},"reason":{"dataType":"string"},"placement":{"dataType":"string","required":true},"message":{"dataType":"string"},"title":{"dataType":"string"},"reminderId":{"dataType":"string"},"todoId":{"dataType":"string"},"eventId":{"dataType":"string"},"productId":{"dataType":"string","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UpdateSponsorSuggestionBodyDTO": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"status":{"ref":"SponsorSuggestionStatusDTO","required":true}},"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"AiSponsorSuggestionBodyDTO"},{"dataType":"nestedObjectLiteral","nestedProperties":{"created_at":{"dataType":"string","required":true},"status":{"dataType":"string","required":true},"id":{"dataType":"string","required":true}},"additionalProperties":{"dataType":"any"}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -688,7 +693,6 @@ export function RegisterRoutes(app: Router) {
         const argsAiSponsorController_getSponsorContext: Record<string, TsoaRoute.ParameterSchema> = {
         };
         app.get('/ai-service/sponsor-context',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiSponsorController)),
             ...(fetchMiddlewares<RequestHandler>(AiSponsorController.prototype.getSponsorContext)),
 
@@ -715,11 +719,72 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAiServiceController_addChatMessage: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"AiChatMessageBodyDTO"},
+        };
+        app.post('/ai-service/users/:userId/chat',
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.addChatMessage)),
+
+            async function AiServiceController_addChatMessage(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAiServiceController_addChatMessage, request, response });
+
+                const controller = new AiServiceController();
+
+              await templateService.apiHandler({
+                methodName: 'addChatMessage',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAiServiceController_getChatHistory: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+                limit: {"in":"query","name":"limit","dataType":"double"},
+        };
+        app.get('/ai-service/users/:userId/chat_history',
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.getChatHistory)),
+
+            async function AiServiceController_getChatHistory(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAiServiceController_getChatHistory, request, response });
+
+                const controller = new AiServiceController();
+
+              await templateService.apiHandler({
+                methodName: 'getChatHistory',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAiServiceController_getContext: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
         };
         app.get('/ai-service/users/:userId/context',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.getContext)),
 
@@ -746,59 +811,26 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsAiServiceController_upsertFacts: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsAiServiceController_addFact: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"AiServiceFactsBodyDTO"},
+                body: {"in":"body","name":"body","required":true,"ref":"AiFactBodyDTO"},
         };
         app.post('/ai-service/users/:userId/facts',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
-            ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.upsertFacts)),
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.addFact)),
 
-            async function AiServiceController_upsertFacts(request: ExRequest, response: ExResponse, next: any) {
+            async function AiServiceController_addFact(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsAiServiceController_upsertFacts, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsAiServiceController_addFact, request, response });
 
                 const controller = new AiServiceController();
 
               await templateService.apiHandler({
-                methodName: 'upsertFacts',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsAiServiceController_updateProfile: Record<string, TsoaRoute.ParameterSchema> = {
-                userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"UpdateAiProfileBodyDTO"},
-        };
-        app.patch('/ai-service/users/:userId/profile',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
-            ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.updateProfile)),
-
-            async function AiServiceController_updateProfile(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsAiServiceController_updateProfile, request, response });
-
-                const controller = new AiServiceController();
-
-              await templateService.apiHandler({
-                methodName: 'updateProfile',
+                methodName: 'addFact',
                 controller,
                 response,
                 next,
@@ -815,7 +847,6 @@ export function RegisterRoutes(app: Router) {
                 key: {"in":"path","name":"key","required":true,"dataType":"string"},
         };
         app.delete('/ai-service/users/:userId/facts/:key',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.deleteFact)),
 
@@ -842,12 +873,42 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAiServiceController_updateProfile: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"ref":"JsonObject"},
+        };
+        app.patch('/ai-service/users/:userId/profile',
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.updateProfile)),
+
+            async function AiServiceController_updateProfile(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAiServiceController_updateProfile, request, response });
+
+                const controller = new AiServiceController();
+
+              await templateService.apiHandler({
+                methodName: 'updateProfile',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAiServiceController_createEvent: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"CreateEventBodyDTO"},
+                body: {"in":"body","name":"body","required":true,"ref":"AiEventBodyDTO"},
         };
         app.post('/ai-service/users/:userId/events',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.createEvent)),
 
@@ -877,10 +938,9 @@ export function RegisterRoutes(app: Router) {
         const argsAiServiceController_updateEvent: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"UpdateEventBodyDTO"},
+                body: {"in":"body","name":"body","required":true,"ref":"AiEventUpdateBodyDTO"},
         };
         app.patch('/ai-service/users/:userId/events/:id',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.updateEvent)),
 
@@ -912,7 +972,6 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
         app.delete('/ai-service/users/:userId/events/:id',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.deleteEvent)),
 
@@ -941,10 +1000,9 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAiServiceController_createTodo: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"CreateTodoBodyDTO"},
+                body: {"in":"body","name":"body","required":true,"ref":"AiTodoBodyDTO"},
         };
         app.post('/ai-service/users/:userId/todos',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.createTodo)),
 
@@ -974,10 +1032,9 @@ export function RegisterRoutes(app: Router) {
         const argsAiServiceController_updateTodo: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"UpdateTodoBodyDTO"},
+                body: {"in":"body","name":"body","required":true,"ref":"AiTodoUpdateBodyDTO"},
         };
         app.patch('/ai-service/users/:userId/todos/:id',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.updateTodo)),
 
@@ -1009,7 +1066,6 @@ export function RegisterRoutes(app: Router) {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
         };
         app.delete('/ai-service/users/:userId/todos/:id',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.deleteTodo)),
 
@@ -1039,10 +1095,9 @@ export function RegisterRoutes(app: Router) {
         const argsAiServiceController_updateReminder: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"UpdateReminderBodyDTO"},
+                body: {"in":"body","name":"body","required":true,"ref":"AiReminderUpdateBodyDTO"},
         };
         app.patch('/ai-service/users/:userId/reminders/:id',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.updateReminder)),
 
@@ -1071,10 +1126,9 @@ export function RegisterRoutes(app: Router) {
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAiServiceController_createSponsorSuggestion: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"CreateSponsorSuggestionBodyDTO"},
+                body: {"in":"body","name":"body","required":true,"ref":"AiSponsorSuggestionBodyDTO"},
         };
         app.post('/ai-service/users/:userId/sponsor-suggestions',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.createSponsorSuggestion)),
 
@@ -1104,10 +1158,9 @@ export function RegisterRoutes(app: Router) {
         const argsAiServiceController_updateSponsorSuggestion: Record<string, TsoaRoute.ParameterSchema> = {
                 userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                body: {"in":"body","name":"body","required":true,"ref":"UpdateSponsorSuggestionBodyDTO"},
+                body: {"in":"body","name":"body","required":true,"ref":"JsonObject"},
         };
         app.patch('/ai-service/users/:userId/sponsor-suggestions/:id',
-            authenticateMiddleware([{"serviceBearerAuth":[]}]),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
             ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.updateSponsorSuggestion)),
 
@@ -1123,6 +1176,66 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'updateSponsorSuggestion',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAiServiceController_getSponsorSuggestions: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+        };
+        app.get('/ai-service/users/:userId/sponsor-suggestions',
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.getSponsorSuggestions)),
+
+            async function AiServiceController_getSponsorSuggestions(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAiServiceController_getSponsorSuggestions, request, response });
+
+                const controller = new AiServiceController();
+
+              await templateService.apiHandler({
+                methodName: 'getSponsorSuggestions',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAiServiceController_resetUser: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+        };
+        app.delete('/ai-service/users/:userId/reset',
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController)),
+            ...(fetchMiddlewares<RequestHandler>(AiServiceController.prototype.resetUser)),
+
+            async function AiServiceController_resetUser(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAiServiceController_resetUser, request, response });
+
+                const controller = new AiServiceController();
+
+              await templateService.apiHandler({
+                methodName: 'resetUser',
                 controller,
                 response,
                 next,

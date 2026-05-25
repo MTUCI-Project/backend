@@ -13,6 +13,7 @@ import { notFoundMiddleware } from './http/middlewares/notFound.middleware';
 import { errorMiddleware } from './http/middlewares/error.middleware';
 
 import { RegisterRoutes } from './generated/routes';
+import { healthRouter } from './http/routes/health.route';
 import swaggerSpec from './generated/swagger.json';
 
 function shouldIgnoreHttpLog(url?: string) {
@@ -80,6 +81,9 @@ export function createApp() {
     app.use(cookieParser());
 
     RegisterRoutes(app);
+
+    // Health check route
+    app.use('/', healthRouter);
 
     if (env.NODE_ENV !== 'production') {
         app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

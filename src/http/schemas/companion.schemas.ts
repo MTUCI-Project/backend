@@ -6,11 +6,11 @@ const requiredUnknownSchema = z.custom<unknown>(
 );
 
 export const uuidParamsSchema = z.object({
-    id: z.string().uuid(),
+    id: z.string(),
 });
 
 export const userIdParamsSchema = z.object({
-    userId: z.string().uuid(),
+    userId: z.string(),
 });
 
 export const inviteCodeParamsSchema = z.object({
@@ -37,7 +37,7 @@ const isoDateSchema = z.string().datetime({ offset: true });
 const metadataSchema = z.record(z.unknown());
 
 export const sponsorOfferSchema = z.object({
-    productId: z.string().uuid().optional(),
+    productId: z.string().min(1).max(128).optional(),
     title: z.string().min(1).max(300),
     description: z.string().max(2_000).optional(),
     url: z.string().url().max(2_000).optional(),
@@ -80,7 +80,7 @@ export const eventUpdateSchema = z.object({
 });
 
 export const standaloneTodoCreateSchema = todoCreateSchema.extend({
-    eventId: z.string().uuid().optional(),
+    eventId: z.string().min(1).max(128).optional(),
 });
 
 export const todoUpdateSchema = z.object({

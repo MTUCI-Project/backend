@@ -1,0 +1,54 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: mtuci-backend:latest
+    container_name: mtuci-backend
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      LOG_LEVEL: info
+      DATABASE_URL: postgresql://admin:admin123@postgres:5432/db?schema=public
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_USE_SSL: "false"
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_started
+      minio:
+        condition: service_started
+    volumes:
+      - ../logs:/app/logs
+
+  postgres:
+    image: postgres:15
+    container_name: mtuci-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ../docker/data/postgres:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio
+    container_name: mtuci-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: admin123
+    volumes:
+      - ../docker/data/minio:/data

@@ -495,21 +495,3 @@ export async function updateUserReminderStatus(
         data: { status },
     });
 }
-
-export async function getAiUserContext(userId: string) {
-    await assertActiveUser(userId);
-
-    const [onboardingAnswers, events, todos, reminders] = await Promise.all([
-        listOnboardingAnswers(userId),
-        listUserEvents(userId),
-        listUserTodos(userId),
-        listUserReminders(userId),
-    ]);
-
-    return {
-        onboardingAnswers,
-        events,
-        todos,
-        reminders,
-    };
-}
