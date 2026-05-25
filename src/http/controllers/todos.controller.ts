@@ -9,20 +9,22 @@ import {
 import type { Request as ExpressRequest } from 'express';
 
 import {
-    listUserTodos,
-} from '../../domain/companion/companion.service';
-import {
-    toTodoDTO,
-    type TodoDTO,
-} from '../dto/companion.dto';
+    listTodos,
+} from '../../domain/aiService/aiService.service';
+import type { AiTodoDTO } from '../dto/aiService.dto';
 
 @Route('todos')
 @Tags('Todos')
 export class TodosController extends Controller {
     @Get()
     @Security('cookieAuth')
-    public async list(@Request() req: ExpressRequest): Promise<TodoDTO[]> {
-        const todos = await listUserTodos(req.user!.id);
-        return todos.map(toTodoDTO);
+    public async list(@Request() req: ExpressRequest): Promise<AiTodoDTO[]> {
+        const todos = await listTodos(req.user!.id);
+        return todos.map((todo) => ({
+            id: todo.id,
+            text: todo.text,
+            due: todo.due,
+            completed: todo.completed,
+        }));
     }
 }

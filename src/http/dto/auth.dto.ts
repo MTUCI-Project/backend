@@ -11,12 +11,24 @@ export type LoginBodyDTO = {
     password: string;
 };
 
-export type AuthResponseDTO = {
-    user: UserSelfDTO;
+export type RefreshBodyDTO = {
+    refreshToken?: string;
 };
 
-export function toAuthResponseDTO(input: { user: any }): AuthResponseDTO {
+export type AuthResponseDTO = {
+    user: UserSelfDTO;
+    accessToken: string;
+    refreshToken: string;
+};
+
+export function toAuthResponseDTO(input: {
+    user: any;
+    token: string;
+    refreshToken: string;
+}): AuthResponseDTO {
     return {
         user: toUserSelfDTO(input.user),
+        accessToken: input.token,
+        refreshToken: input.refreshToken,
     };
 }

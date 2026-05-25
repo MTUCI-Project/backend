@@ -48,69 +48,16 @@
 				],
 				"type": "object"
 			},
-			"TodoStatusDTO": {
-				"type": "string",
-				"enum": [
-					"open",
-					"done",
-					"dismissed",
-					"cancelled"
-				]
-			},
-			"SourceDTO": {
-				"type": "string",
-				"enum": [
-					"user",
-					"ai",
-					"system"
-				]
-			},
-			"SponsorOfferStatusDTO": {
-				"type": "string",
-				"enum": [
-					"proposed",
-					"accepted",
-					"dismissed",
-					"expired"
-				]
-			},
-			"SponsorOfferDTO": {
+			"AiTodoDTO": {
 				"properties": {
-					"updatedAt": {
-						"type": "string"
+					"completed": {
+						"type": "boolean"
 					},
-					"createdAt": {
-						"type": "string"
+					"due": {
+						"type": "string",
+						"nullable": true
 					},
-					"metadata": {},
-					"status": {
-						"$ref": "#/components/schemas/SponsorOfferStatusDTO"
-					},
-					"placement": {
-						"type": "string"
-					},
-					"sponsorName": {
-						"type": "string"
-					},
-					"url": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string"
-					},
-					"title": {
-						"type": "string"
-					},
-					"todoId": {
-						"type": "string"
-					},
-					"eventId": {
-						"type": "string"
-					},
-					"productId": {
-						"type": "string"
-					},
-					"userId": {
+					"text": {
 						"type": "string"
 					},
 					"id": {
@@ -118,136 +65,8 @@
 					}
 				},
 				"required": [
-					"updatedAt",
-					"createdAt",
-					"metadata",
-					"status",
-					"placement",
-					"sponsorName",
-					"title",
-					"userId",
-					"id"
-				],
-				"type": "object"
-			},
-			"ReminderStatusDTO": {
-				"type": "string",
-				"enum": [
-					"scheduled",
-					"sent",
-					"dismissed",
-					"done",
-					"cancelled"
-				]
-			},
-			"ReminderChannelDTO": {
-				"type": "string",
-				"enum": [
-					"push",
-					"in_app",
-					"email"
-				]
-			},
-			"ReminderDTO": {
-				"properties": {
-					"updatedAt": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string"
-					},
-					"source": {
-						"$ref": "#/components/schemas/SourceDTO"
-					},
-					"payload": {},
-					"channel": {
-						"$ref": "#/components/schemas/ReminderChannelDTO"
-					},
-					"status": {
-						"$ref": "#/components/schemas/ReminderStatusDTO"
-					},
-					"triggerAt": {
-						"type": "string"
-					},
-					"todoId": {
-						"type": "string"
-					},
-					"eventId": {
-						"type": "string"
-					},
-					"userId": {
-						"type": "string"
-					},
-					"id": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"updatedAt",
-					"createdAt",
-					"source",
-					"payload",
-					"channel",
-					"status",
-					"triggerAt",
-					"userId",
-					"id"
-				],
-				"type": "object"
-			},
-			"TodoDTO": {
-				"properties": {
-					"updatedAt": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string"
-					},
-					"reminders": {
-						"items": {
-							"$ref": "#/components/schemas/ReminderDTO"
-						},
-						"type": "array"
-					},
-					"sponsorOffers": {
-						"items": {
-							"$ref": "#/components/schemas/SponsorOfferDTO"
-						},
-						"type": "array"
-					},
-					"metadata": {},
-					"source": {
-						"$ref": "#/components/schemas/SourceDTO"
-					},
-					"dueAt": {
-						"type": "string"
-					},
-					"status": {
-						"$ref": "#/components/schemas/TodoStatusDTO"
-					},
-					"title": {
-						"type": "string"
-					},
-					"eventId": {
-						"type": "string"
-					},
-					"userId": {
-						"type": "string"
-					},
-					"id": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"updatedAt",
-					"createdAt",
-					"reminders",
-					"sponsorOffers",
-					"metadata",
-					"source",
-					"status",
-					"title",
-					"userId",
+					"completed",
+					"text",
 					"id"
 				],
 				"type": "object"
@@ -406,6 +225,37 @@
 				],
 				"type": "object"
 			},
+			"AiReminderDTO": {
+				"properties": {
+					"is_active": {
+						"type": "boolean"
+					},
+					"remind_at": {
+						"type": "string",
+						"nullable": true
+					},
+					"text": {
+						"type": "string",
+						"nullable": true
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"is_active",
+					"id"
+				],
+				"type": "object"
+			},
+			"SourceDTO": {
+				"type": "string",
+				"enum": [
+					"user",
+					"ai",
+					"system"
+				]
+			},
 			"OnboardingAnswerDTO": {
 				"properties": {
 					"updatedAt": {
@@ -452,13 +302,101 @@
 				],
 				"type": "object"
 			},
+			"AiEventDTO": {
+				"properties": {
+					"status": {
+						"type": "string"
+					},
+					"date": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"title": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"status",
+					"date",
+					"title",
+					"id"
+				],
+				"type": "object"
+			},
+			"ChatSenderDTO": {
+				"type": "string",
+				"enum": [
+					"user",
+					"assistant"
+				]
+			},
+			"ChatDeliveryStatusDTO": {
+				"type": "string",
+				"enum": [
+					"pending",
+					"sent",
+					"failed"
+				]
+			},
+			"ChatMessageDTO": {
+				"properties": {
+					"deliveryStatus": {
+						"$ref": "#/components/schemas/ChatDeliveryStatusDTO"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"sender": {
+						"$ref": "#/components/schemas/ChatSenderDTO"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"deliveryStatus",
+					"timestamp",
+					"message",
+					"sender",
+					"id"
+				],
+				"type": "object"
+			},
+			"CreateChatMessageBodyDTO": {
+				"properties": {
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object"
+			},
 			"AuthResponseDTO": {
 				"properties": {
+					"refreshToken": {
+						"type": "string"
+					},
+					"accessToken": {
+						"type": "string"
+					},
 					"user": {
 						"$ref": "#/components/schemas/UserSelfDTO"
 					}
 				},
 				"required": [
+					"refreshToken",
+					"accessToken",
 					"user"
 				],
 				"type": "object"
@@ -516,6 +454,131 @@
 				"required": [
 					"password",
 					"username"
+				],
+				"type": "object"
+			},
+			"RefreshBodyDTO": {
+				"properties": {
+					"refreshToken": {
+						"type": "string"
+					}
+				},
+				"type": "object"
+			},
+			"DateSuggestionDTO": {
+				"properties": {
+					"type": {
+						"type": "string"
+					},
+					"estimated_cost": {
+						"type": "number",
+						"format": "double"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"type",
+					"estimated_cost",
+					"description",
+					"title",
+					"id"
+				],
+				"type": "object"
+			},
+			"SuggestDateBodyDTO": {
+				"properties": {
+					"budget": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object"
+			},
+			"RecommendationDTO": {
+				"properties": {
+					"reason": {
+						"type": "string"
+					},
+					"partner_url": {
+						"type": "string",
+						"nullable": true
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"reason",
+					"partner_url",
+					"price",
+					"description",
+					"title",
+					"id"
+				],
+				"type": "object"
+			},
+			"RecommendBodyDTO": {
+				"properties": {
+					"type": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"type"
+				],
+				"type": "object"
+			},
+			"RelationshipAnalysisDTO": {
+				"properties": {
+					"suggested_actions": {
+						"items": {
+							"properties": {
+								"action": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"action"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					},
+					"growth_areas": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"strengths": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"suggested_actions",
+					"growth_areas",
+					"strengths"
 				],
 				"type": "object"
 			},
@@ -587,79 +650,6 @@
 					"timestamp",
 					"sentiment",
 					"message",
-					"id"
-				],
-				"type": "object"
-			},
-			"AiEventDTO": {
-				"properties": {
-					"status": {
-						"type": "string"
-					},
-					"date": {
-						"type": "string"
-					},
-					"description": {
-						"type": "string",
-						"nullable": true
-					},
-					"title": {
-						"type": "string"
-					},
-					"id": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"status",
-					"date",
-					"title",
-					"id"
-				],
-				"type": "object"
-			},
-			"AiTodoDTO": {
-				"properties": {
-					"completed": {
-						"type": "boolean"
-					},
-					"due": {
-						"type": "string",
-						"nullable": true
-					},
-					"text": {
-						"type": "string"
-					},
-					"id": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"completed",
-					"text",
-					"id"
-				],
-				"type": "object"
-			},
-			"AiReminderDTO": {
-				"properties": {
-					"is_active": {
-						"type": "boolean"
-					},
-					"remind_at": {
-						"type": "string",
-						"nullable": true
-					},
-					"text": {
-						"type": "string",
-						"nullable": true
-					},
-					"id": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"is_active",
 					"id"
 				],
 				"type": "object"
@@ -954,7 +944,7 @@
 						}
 					}
 				},
-				"description": "GET /users/me\r\nauth required",
+				"description": "GET /users/me\nauth required",
 				"tags": [
 					"Users"
 				],
@@ -978,7 +968,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/TodoDTO"
+										"$ref": "#/components/schemas/AiTodoDTO"
 									},
 									"type": "array"
 								}
@@ -1191,7 +1181,7 @@
 							"application/json": {
 								"schema": {
 									"items": {
-										"$ref": "#/components/schemas/ReminderDTO"
+										"$ref": "#/components/schemas/AiReminderDTO"
 									},
 									"type": "array"
 								}
@@ -1273,6 +1263,108 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/events": {
+			"get": {
+				"operationId": "List",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/AiEventDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Events"
+				],
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/chat/messages": {
+			"get": {
+				"operationId": "List",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/ChatMessageDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Chat"
+				],
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ChatMessageDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Chat"
+				],
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateChatMessageBodyDTO"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/auth/register": {
@@ -1428,7 +1520,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/OkDTO"
+									"$ref": "#/components/schemas/AuthResponseDTO"
 								}
 							}
 						}
@@ -1438,7 +1530,17 @@
 					"Auth"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RefreshBodyDTO"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/auth/logout": {
@@ -1458,6 +1560,104 @@
 				},
 				"tags": [
 					"Auth"
+				],
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/assistant/suggest-date": {
+			"post": {
+				"operationId": "SuggestDate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DateSuggestionDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assistant"
+				],
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SuggestDateBodyDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/assistant/recommend": {
+			"post": {
+				"operationId": "Recommend",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RecommendationDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assistant"
+				],
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RecommendBodyDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/assistant/analyze-relationship": {
+			"post": {
+				"operationId": "AnalyzeRelationship",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RelationshipAnalysisDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Assistant"
 				],
 				"security": [
 					{

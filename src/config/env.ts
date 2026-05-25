@@ -46,6 +46,9 @@ const EnvSchema = z.object({
     JWT_REFRESH_SECRET: z.string().min(32),
     JWT_REFRESH_EXPIRES_IN: z.coerce.number().int().positive().default(2592000),
 
+    AI_BACKEND_BASE_URL: z.string().url().default('http://100.99.60.109:3001'),
+    AI_BACKEND_TIMEOUT_MS: z.coerce.number().int().positive().default(10_000),
+
     MAX_UPLOAD_BYTES: z.coerce.number().int().positive().default(104857600),
 
     SEED_ADMIN_EMAIL: z.string().default('admin@local'),

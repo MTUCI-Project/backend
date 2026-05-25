@@ -13,10 +13,6 @@ export const userIdParamsSchema = z.object({
     userId: z.string(),
 });
 
-export const inviteCodeParamsSchema = z.object({
-    code: z.string().min(6).max(64),
-});
-
 export const sourceSchema = z.enum(['user', 'ai', 'system']);
 export const todoStatusSchema = z.enum([
     'open',

@@ -10,6 +10,14 @@ async function attachRbacContext<T extends { id: string }>(user: T) {
     return { ...user, ...rbac };
 }
 
+export async function getAuthUser(userId: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user || user.deletedAt) {
+        throw apiError(401, 'UNAUTHORIZED', 'User not found');
+    }
+    return attachRbacContext(user);
+}
+
 export async function registerUser(input: {
     username: string;
     password: string;

@@ -50,6 +50,26 @@ function inputJson(value: JsonObject): Prisma.InputJsonObject {
     return value as Prisma.InputJsonObject;
 }
 
+function partnerProfile(
+    answers: Array<{ questionKey: string; answer: Prisma.JsonValue }>,
+): JsonObject {
+    const onboarding = Object.fromEntries(
+        answers.map((answer) => [answer.questionKey, answer.answer]),
+    );
+    const basic = jsonObject(
+        onboarding['partner.basic'] as Prisma.JsonValue | undefined,
+    );
+
+    return {
+        ...basic,
+        hobbies: onboarding['partner.hobbies'] ?? [],
+        likes: onboarding['partner.likes'] ?? [],
+        dislikes: onboarding['partner.dislikes'] ?? [],
+        notes: onboarding['partner.notes'] ?? {},
+        completed: onboarding['partner.completed'] ?? false,
+    };
+}
+
 async function assertEvent(userId: string, id: string) {
     const event = await prisma.aiServiceEvent.findFirst({
         where: { id, userId },
@@ -86,18 +106,64 @@ export async function getChatHistory(userId: string, limit: number) {
     return messages.reverse();
 }
 
+export async function listEvents(userId: string) {
+    await assertActiveUser(userId);
+    return prisma.aiServiceEvent.findMany({
+        where: { userId },
+        orderBy: { date: 'asc' },
+    });
+}
+
+export async function listTodos(userId: string) {
+    await assertActiveUser(userId);
+    return prisma.aiServiceTodo.findMany({ where: { userId } });
+}
+
+export async function listReminders(userId: string) {
+    await assertActiveUser(userId);
+    return prisma.aiServiceReminder.findMany({ where: { userId } });
+}
+
 export async function getContext(userId: string) {
     await assertActiveUser(userId);
-    const [state, events, todos, reminders] = await Promise.all([
-        prisma.aiServiceState.findUnique({ where: { userId } }),
-        prisma.aiServiceEvent.findMany({ where: { userId } }),
-        prisma.aiServiceTodo.findMany({ where: { userId } }),
-        prisma.aiServiceReminder.findMany({ where: { userId } }),
-    ]);
+    const [state, onboardingAnswers, recentMessages, events, todos, reminders] =
+        await Promise.all([
+            prisma.aiServiceState.findUnique({ where: { userId } }),
+            prisma.onboardingAnswer.findMany({
+                where: { userId },
+                select: { questionKey: true, answer: true },
+            }),
+            prisma.userChatMessage.findMany({
+                where: { userId, deliveryStatus: 'sent' },
+                orderBy: { timestamp: 'desc' },
+                take: 50,
+                select: {
+                    sender: true,
+                    message: true,
+                    timestamp: true,
+                },
+            }),
+            prisma.aiServiceEvent.findMany({ where: { userId } }),
+            prisma.aiServiceTodo.findMany({ where: { userId } }),
+            prisma.aiServiceReminder.findMany({ where: { userId } }),
+        ]);
+
+    const partner = partnerProfile(onboardingAnswers);
 
     return {
-        profile: jsonObject(state?.profile),
-        facts: jsonObject(state?.facts),
+        profile: {
+            ...jsonObject(state?.profile),
+            partner,
+        },
+        facts: {
+            ...jsonObject(state?.facts),
+            partner,
+            recent_conversation: recentMessages.reverse().map((message) => ({
+                role: message.sender,
+                message: message.message,
+                timestamp: message.timestamp.toISOString(),
+            })),
+        },
         events,
         todos,
         reminders,

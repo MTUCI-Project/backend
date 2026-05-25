@@ -3,6 +3,7 @@ import { env } from './config/env';
 import { logger } from './config/logger';
 import { prisma } from './lib/prisma';
 import { ensureBucket } from './lib/minio';
+import { attachChatWebSocketServer } from './domain/chat/chat.gateway';
 
 const app = createApp();
 
@@ -12,6 +13,7 @@ async function start() {
     const server = app.listen(env.PORT, () => {
         logger.info({ port: env.PORT, env: env.NODE_ENV }, 'Server started');
     });
+    attachChatWebSocketServer(server);
 
     let shuttingDown = false;
 

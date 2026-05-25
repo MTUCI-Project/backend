@@ -23,6 +23,13 @@
 - `GET /users/me`
 - `POST /onboarding/answers`
 - `GET /onboarding/answers/me`
+- `GET /chat/messages`
+- `POST /chat/messages`
+- `WS /ws/chat`
+- `POST /assistant/suggest-date` (`{ "budget": 2000 }`)
+- `POST /assistant/recommend` (`{ "type": "gift" }`)
+- `POST /assistant/analyze-relationship`
+- `GET /events`
 - `GET /todos`
 - `GET /reminders`
 
@@ -31,6 +38,8 @@
 AI-бэку доступны ручки:
 
 - `GET /ai-service/sponsor-context`
+- `POST /ai-service/users/{userId}/chat`
+- `GET /ai-service/users/{userId}/chat_history`
 - `GET /ai-service/users/{userId}/context`
 - `PATCH /ai-service/users/{userId}/profile`
 - `POST /ai-service/users/{userId}/facts`
@@ -44,6 +53,8 @@ AI-бэку доступны ручки:
 - `PATCH /ai-service/users/{userId}/reminders/{id}`
 - `POST /ai-service/users/{userId}/sponsor-suggestions`
 - `PATCH /ai-service/users/{userId}/sponsor-suggestions/{id}`
+- `GET /ai-service/users/{userId}/sponsor-suggestions`
+- `DELETE /ai-service/users/{userId}/reset`
 
 Админские ручки каталога спонсоров доступны только пользователям с permission `sponsors.manage`:
 
@@ -68,15 +79,50 @@ PostgreSQL хранит структурированные сущности:
 - `SponsorProduct` - каталог спонсорских товаров: описание, реферальная ссылка, спонсор, категория, теги и metadata.
 - `SponsorOffer` - спонсорские предложения, связанные с событием или todo.
 - `SponsorSuggestion` - результат контекстного рекламного выбора AI для конкретного пользователя.
-- `CoupleLink` - техническая модель связи пары. На текущей публичной поверхности она не открыта пользователю.
-
 PostgreSQL также хранит контекст AI-сервиса:
 
 - `AiServiceState` - профиль и нормализованные факты пользователя.
 - `AiServiceEvent`, `AiServiceTodo`, `AiServiceReminder` - действия и напоминания AI-бэка.
 - `AiServiceSponsorSuggestion`, `AiServiceChatMessage` - рекомендации и история сообщений.
+- `UserChatMessage` - история сообщений, отображаемая мобильному приложению.
 
 Мобильное приложение не имеет прямых ручек для изменения AI-контекста.
+
+### Контекст для AI-бэка
+
+`GET /ai-service/users/{userId}/context` формируется из двух источников:
+
+- значения, записанные AI через `profile` и `facts`;
+- явные ответы пользователя из onboarding и история пользовательского чата.
+
+Профиль партнёра из onboarding (`partner.basic`, `partner.hobbies`,
+`partner.likes`, `partner.dislikes`, `partner.notes`, `partner.completed`)
+возвращается одновременно как `profile.partner` и `facts.partner`.
+Это необходимо для текущего контракта AI-бэка: сценарий свидания читает весь
+context, а `ChatAgent` передаёт модели только поле `facts`.
+
+В `facts.recent_conversation` возвращаются последние 50 успешно доставленных
+сообщений чата с полями `role`, `message` и `timestamp`. Текущая реплика в
+статусе `pending` не включается, поскольку AI уже получает её полем `message`
+в запросе `POST /ml/chat`. В отличие от этого,
+`/ai-service/users/{userId}/chat_history` хранит сообщения, которые AI-бэк
+записывает для собственного анализа sentiment/отношений.
+
+Поток чата:
+
+1. Приложение вызывает `POST /chat/messages` с исходным пользовательским текстом.
+2. Backend сохраняет его в `UserChatMessage` и вызывает `POST /ml/chat` с
+   `user_id`, исходным `message` и `timestamp`.
+3. Реализация `ml_agent_system` при обработке чата вызывает
+   `GET /ai-service/users/{userId}/context`, но использует именно `facts`.
+4. AI-бэк записывает проанализированное пользовательское сообщение через
+   `POST /ai-service/users/{userId}/chat`.
+5. Backend берёт `reply` из HTTP-ответа `/ml/chat`, сохраняет его в
+   `UserChatMessage` как сообщение `assistant` и отправляет его клиенту через
+   WebSocket.
+
+Из этого следует, что сведения onboarding для чат-агента должны находиться в
+`facts.partner`; передача их только через `profile` недостаточна.
 
 ## Переменные окружения
 
@@ -93,9 +139,27 @@ MINIO_BUCKET=media
 
 JWT_SECRET=super-secret-dev-key-with-32-symbols
 JWT_REFRESH_SECRET=super-secret-refresh-dev-key-with-32-symbols
+
+AI_BACKEND_BASE_URL=http://100.99.60.109:3001
+AI_BACKEND_TIMEOUT_MS=10000
 ```
 
 Полный пример находится в `.env.example`.
+
+### Локальный mock AI
+
+Для проверки чата без запущенного AI-бэка можно использовать локальный mock:
+
+```bash
+APP_BACKEND_BASE_URL=http://localhost:3000 npm run mock:ai
+```
+
+Backend должен использовать `AI_BACKEND_BASE_URL=http://localhost:3001`.
+Mock повторяет порядок `ChatAgent`: читает
+`/ai-service/users/{userId}/context`, сохраняет входное сообщение в служебную
+`/ai-service/users/{userId}/chat` и возвращает отличающийся ответ из
+`POST /ml/chat`. В ответе mock показывает имя и аллергию партнёра из
+`facts.partner`, а также число сообщений в `facts.recent_conversation`.
 
 ## Локальный запуск
 

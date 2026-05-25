@@ -1,4 +1,3 @@
-import { randomBytes } from 'node:crypto';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '../../lib/prisma';
 import { apiError } from '../../http/errors/ApiError';
@@ -87,80 +86,6 @@ async function ensureEventOwnedByUser(
     });
 
     if (!event) throw apiError(404, 'NOT_FOUND', 'Event not found');
-}
-
-async function generateInviteCode() {
-    for (let attempt = 0; attempt < 5; attempt += 1) {
-        const code = randomBytes(9).toString('base64url');
-        const existing = await prisma.coupleLink.findUnique({
-            where: { inviteCode: code },
-            select: { id: true },
-        });
-        if (!existing) return code;
-    }
-
-    throw apiError(500, 'INVITE_CODE_GENERATION_FAILED');
-}
-
-export async function createCoupleInvite(userId: string) {
-    await assertActiveUser(userId);
-
-    const code = await generateInviteCode();
-    return prisma.coupleLink.create({
-        data: {
-            userAId: userId,
-            createdById: userId,
-            inviteCode: code,
-        },
-    });
-}
-
-export async function acceptCoupleInvite(userId: string, code: string) {
-    await assertActiveUser(userId);
-
-    const link = await prisma.coupleLink.findUnique({
-        where: { inviteCode: code },
-    });
-
-    if (!link || link.status !== 'pending') {
-        throw apiError(404, 'INVITE_NOT_FOUND', 'Invite not found');
-    }
-    if (link.userAId === userId) {
-        throw apiError(400, 'INVITE_OWNED_BY_USER', 'Cannot accept own invite');
-    }
-
-    return prisma.coupleLink.update({
-        where: { id: link.id },
-        data: {
-            userBId: userId,
-            status: 'active',
-            acceptedAt: new Date(),
-        },
-    });
-}
-
-export async function getMyCoupleLink(userId: string) {
-    await assertActiveUser(userId);
-    return prisma.coupleLink.findFirst({
-        where: {
-            OR: [{ userAId: userId }, { userBId: userId }],
-            status: { in: ['pending', 'active'] },
-        },
-        orderBy: { createdAt: 'desc' },
-    });
-}
-
-export async function revokeMyCoupleLink(userId: string) {
-    const link = await getMyCoupleLink(userId);
-    if (!link) throw apiError(404, 'NOT_FOUND', 'Couple link not found');
-
-    return prisma.coupleLink.update({
-        where: { id: link.id },
-        data: {
-            status: 'revoked',
-            revokedAt: new Date(),
-        },
-    });
 }
 
 export async function upsertOnboardingAnswer(

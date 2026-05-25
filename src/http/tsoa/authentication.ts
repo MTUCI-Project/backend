@@ -1,7 +1,6 @@
 import type { Request } from 'express';
 import { verifyAccessToken } from '../../domain/auth/token.service';
 import { apiError } from '../errors/ApiError';
-import { env } from '../../config/env';
 import { prisma } from '../../lib/prisma';
 import { Scope } from '../../domain/auth/permissions';
 
@@ -75,7 +74,7 @@ export async function expressAuthentication(
 ): Promise<Principal | undefined> {
     const token =
         readAccessTokenFromCookie(req) ??
-        (env.NODE_ENV !== 'production' ? readBearerFallback(req) : null);
+        readBearerFallback(req);
 
     const { requiredPerms, forceLoad } = splitScopes(scopes);
     const needPerms = forceLoad || requiredPerms.length > 0;
