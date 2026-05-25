@@ -7,6 +7,8 @@ import { attachChatWebSocketServer } from './domain/chat/chat.gateway';
 
 const app = createApp();
 
+app.disable('x-powered-by');
+
 async function start() {
     await ensureBucket();
 
