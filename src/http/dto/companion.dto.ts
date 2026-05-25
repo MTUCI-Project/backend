@@ -1,5 +1,4 @@
 export type SourceDTO = 'user' | 'ai' | 'system';
-export type CoupleLinkStatusDTO = 'pending' | 'active' | 'declined' | 'revoked';
 export type TodoStatusDTO = 'open' | 'done' | 'dismissed' | 'cancelled';
 export type ReminderStatusDTO =
     | 'scheduled'
@@ -75,17 +74,6 @@ export type UpdateReminderBodyDTO = {
 export type UpsertOnboardingAnswerBodyDTO = {
     questionKey: string;
     answer: unknown;
-};
-
-export type CoupleLinkDTO = {
-    id: string;
-    status: CoupleLinkStatusDTO;
-    inviteCode: string;
-    partnerUserId?: string;
-    createdAt: string;
-    updatedAt: string;
-    acceptedAt?: string;
-    revokedAt?: string;
 };
 
 export type OnboardingAnswerDTO = {
@@ -172,20 +160,6 @@ export type AiUserContextDTO = {
 function iso(value: Date | string | null | undefined): string | undefined {
     if (!value) return undefined;
     return new Date(value).toISOString();
-}
-
-export function toCoupleLinkDTO(link: any, userId: string): CoupleLinkDTO {
-    const partnerUserId = link.userAId === userId ? link.userBId : link.userAId;
-    return {
-        id: link.id,
-        status: link.status,
-        inviteCode: link.inviteCode,
-        partnerUserId: partnerUserId ?? undefined,
-        createdAt: iso(link.createdAt)!,
-        updatedAt: iso(link.updatedAt)!,
-        acceptedAt: iso(link.acceptedAt),
-        revokedAt: iso(link.revokedAt),
-    };
 }
 
 export function toOnboardingAnswerDTO(answer: any): OnboardingAnswerDTO {

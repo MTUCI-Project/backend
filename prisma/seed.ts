@@ -5,20 +5,25 @@ import { env } from '../src/config/env';
 import { Permission } from '../src/domain/auth/permissions';
 
 async function upsertUser(params: {
+    id?: string;
     username: string;
     password: string;
     deleted?: boolean;
 }) {
     const passwordHash = await hashPassword(params.password);
+    const where = params.id
+        ? { id: params.id }
+        : { username: params.username };
 
     return prisma.user.upsert({
-        where: { username: params.username },
+        where,
         update: {
             username: params.username,
             password: passwordHash,
             deletedAt: params.deleted ? new Date() : null,
         },
         create: {
+            id: params.id,
             username: params.username,
             password: passwordHash,
             deletedAt: params.deleted ? new Date() : null,
@@ -48,30 +53,28 @@ async function upsertRole(params: {
 async function ensurePermissions() {
     const keys = Object.values(Permission);
 
-    // создаём permission записи (если уже есть — пропускаем)
     await prisma.permission.createMany({
         data: keys.map((key) => ({ key })),
         skipDuplicates: true,
     });
 
-    // вернём map key -> id для связок
     const rows = await prisma.permission.findMany({
         where: { key: { in: keys } },
         select: { id: true, key: true },
     });
 
-    return new Map(rows.map((p) => [p.key, p.id]));
+    return new Map(rows.map((permission) => [permission.key, permission.id]));
 }
 
 async function setRolePermissions(
     roleId: string,
-    permKeys: string[],
-    permIdByKey: Map<string, string>,
+    permissionKeys: string[],
+    permissionIdByKey: Map<string, string>,
 ) {
     await prisma.rolePermission.createMany({
-        data: permKeys.map((k) => ({
+        data: permissionKeys.map((key) => ({
             roleId,
-            permissionId: permIdByKey.get(k)!,
+            permissionId: permissionIdByKey.get(key)!,
         })),
         skipDuplicates: true,
     });
@@ -96,12 +99,9 @@ async function assignRole(params: {
 }
 
 async function main() {
-    console.log('🌱 Seeding...');
+    console.log('Seeding...');
 
-    // 1) permissions
-    const permIdByKey = await ensurePermissions();
-
-    // 2) roles
+    const permissionIdByKey = await ensurePermissions();
     const adminRole = await upsertRole({
         key: 'admin',
         name: 'Admin',
@@ -118,11 +118,8 @@ async function main() {
         isSystem: true,
     });
 
-    // 3) role -> permissions
-    const allPerms = Object.values(Permission);
-
-    await setRolePermissions(adminRole.id, allPerms, permIdByKey);
-
+    const allPermissions = Object.values(Permission);
+    await setRolePermissions(adminRole.id, allPermissions, permissionIdByKey);
     await setRolePermissions(
         moderatorRole.id,
         [
@@ -130,29 +127,29 @@ async function main() {
             Permission.USERS_READ_DELETED,
             Permission.USERS_BAN,
         ],
-        permIdByKey,
+        permissionIdByKey,
     );
+    await setRolePermissions(userRole.id, [Permission.USERS_READ], permissionIdByKey);
 
-    await setRolePermissions(userRole.id, [Permission.USERS_READ], permIdByKey);
-
-    // 4) users
     const admin = await upsertUser({
         username: env.SEED_ADMIN_USERNAME,
         password: env.SEED_ADMIN_PASSWORD,
     });
-
     const regular = await upsertUser({
         username: 'user',
         password: 'user12345',
     });
-
     const deletedUser = await upsertUser({
         username: 'deleted_user',
         password: 'deleted_user12345',
         deleted: true,
     });
+    const alice = await upsertUser({
+        id: 'alice',
+        username: 'alice',
+        password: 'password123',
+    });
 
-    // 5) assignments
     await assignRole({
         userId: admin.id,
         roleId: adminRole.id,
@@ -168,30 +165,18 @@ async function main() {
         roleId: userRole.id,
         createdById: admin.id,
     });
+    await assignRole({
+        userId: alice.id,
+        roleId: userRole.id,
+        createdById: admin.id,
+    });
 
-    console.log('✅ Seed done');
-    console.log('Users:', [
-        {
-            username: admin.username,
-            roles: ['admin'],
-            deletedAt: admin.deletedAt,
-        },
-        {
-            username: regular.username,
-            roles: ['user'],
-            deletedAt: regular.deletedAt,
-        },
-        {
-            username: deletedUser.username,
-            roles: ['user'],
-            deletedAt: deletedUser.deletedAt,
-        },
-    ]);
+    console.log('Seed done. Mock AI service user id:', alice.id);
 }
 
 main()
-    .catch((e) => {
-        console.error('❌ Seed failed', e);
+    .catch((error) => {
+        console.error('Seed failed', error);
         process.exit(1);
     })
     .finally(async () => {

@@ -16,7 +16,11 @@ import type {
 } from 'express';
 
 import { env } from '../../config/env';
-import { registerUser, loginUser } from '../../domain/auth/auth.service';
+import {
+    getAuthUser,
+    registerUser,
+    loginUser,
+} from '../../domain/auth/auth.service';
 import {
     signAccessToken,
     signRefreshToken,
@@ -29,6 +33,7 @@ import {
     type AuthResponseDTO,
     type RegisterBodyDTO,
     type LoginBodyDTO,
+    type RefreshBodyDTO,
 } from '../dto/auth.dto';
 import type { ErrorEnvelopeDTO } from '../dto/error.dto';
 import type { OkDTO } from '../dto/common.dto';
@@ -59,7 +64,7 @@ export class AuthController extends Controller {
         this.setAuthCookies(res, result.token, result.refreshToken);
 
         this.setStatus(201);
-        return toAuthResponseDTO({ user: result.user });
+        return toAuthResponseDTO(result);
     }
 
     @Post('login')
@@ -88,14 +93,17 @@ export class AuthController extends Controller {
         const res = this.mustGetRes(req);
         this.setAuthCookies(res, result.token, result.refreshToken);
 
-        return toAuthResponseDTO({ user: result.user });
+        return toAuthResponseDTO(result);
     }
 
     @Post('refresh')
-    public async refresh(@Request() req: ExpressRequest): Promise<OkDTO> {
-        const refreshToken = (req as any).cookies?.refreshToken as
-            | string
-            | undefined;
+    public async refresh(
+        @Request() req: ExpressRequest,
+        @Body() body?: RefreshBodyDTO,
+    ): Promise<AuthResponseDTO> {
+        const refreshToken =
+            body?.refreshToken ??
+            ((req as any).cookies?.refreshToken as string | undefined);
         if (!refreshToken) {
             throw apiError(401, 'UNAUTHORIZED', 'Missing refresh token');
         }
@@ -117,7 +125,11 @@ export class AuthController extends Controller {
         const res = this.mustGetRes(req);
         this.setAuthCookies(res, newAccess, newRefresh);
 
-        return { status: 'ok' };
+        return toAuthResponseDTO({
+            user: await getAuthUser(payload.sub),
+            token: newAccess,
+            refreshToken: newRefresh,
+        });
     }
 
     @Post('logout')

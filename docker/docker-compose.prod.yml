@@ -13,7 +13,6 @@ services:
       PORT: 3000
       LOG_LEVEL: info
       DATABASE_URL: postgresql://admin:admin123@postgres:5432/db?schema=public
-      MONGODB_URL: mongodb://admin:admin123@mongo:27017/db?authSource=admin
       MINIO_ENDPOINT: minio
       MINIO_PORT: 9000
       MINIO_USE_SSL: "false"
@@ -21,8 +20,6 @@ services:
       - "3000:3000"
     depends_on:
       postgres:
-        condition: service_started
-      mongo:
         condition: service_started
       minio:
         condition: service_started
@@ -42,19 +39,6 @@ services:
     volumes:
       - ../docker/data/postgres:/var/lib/postgresql/data
 
-  mongo:
-    image: mongo:7
-    container_name: mtuci-mongo
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin123
-      MONGO_INITDB_DATABASE: db
-    ports:
-      - "27017:27017"
-    volumes:
-      - ../docker/data/mongo:/data/db
-
   minio:
     image: minio/minio
     container_name: mtuci-minio
@@ -68,10 +52,3 @@ services:
       MINIO_ROOT_PASSWORD: admin123
     volumes:
       - ../docker/data/minio:/data
-
-  adminer:
-    image: adminer
-    container_name: mtuci-adminer
-    restart: unless-stopped
-    ports:
-      - "8080:8080"

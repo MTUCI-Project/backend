@@ -2,17 +2,17 @@
 
 Этот сервис отвечает за аккаунты пользователей, авторизацию, хранение пользовательского контекста для AI-бэка и выдачу минимальных данных мобильному приложению.
 
-Проект построен на Express, tsoa, Prisma/PostgreSQL, MongoDB и MinIO.
+Проект построен на Express, tsoa, Prisma/PostgreSQL и MinIO.
 
 ## Роли сервисов
 
 - Мобильное приложение работает с пользовательской cookie/JWT-авторизацией.
-- AI-бэк работает только через service-to-service Bearer token.
+- AI-бэк обращается к ручкам `/ai-service/*` без service-to-service авторизации.
 - Этот бэк хранит данные пользователя и является единственным источником правды для onboarding, AI-памяти, событий, todo и reminders.
 
 ## Политика доступа
 
-Главное правило: пользователь не может напрямую читать, добавлять или изменять AI-память о себе. Память, события, todo/reminders mutations и sponsor-предложения доступны только AI-бэку по Bearer token.
+Ручки `/ai-service/*` предназначены для интеграции с AI-бэком. Пользовательские сценарии мобильного приложения используют отдельные cookie/JWT-ручки.
 
 Пользователю доступны только:
 
@@ -23,6 +23,13 @@
 - `GET /users/me`
 - `POST /onboarding/answers`
 - `GET /onboarding/answers/me`
+- `GET /chat/messages`
+- `POST /chat/messages`
+- `WS /ws/chat`
+- `POST /assistant/suggest-date` (`{ "budget": 2000 }`)
+- `POST /assistant/recommend` (`{ "type": "gift" }`)
+- `POST /assistant/analyze-relationship`
+- `GET /events`
 - `GET /todos`
 - `GET /reminders`
 
@@ -31,6 +38,8 @@
 AI-бэку доступны ручки:
 
 - `GET /ai-service/sponsor-context`
+- `POST /ai-service/users/{userId}/chat`
+- `GET /ai-service/users/{userId}/chat_history`
 - `GET /ai-service/users/{userId}/context`
 - `PATCH /ai-service/users/{userId}/profile`
 - `POST /ai-service/users/{userId}/facts`
@@ -44,14 +53,8 @@ AI-бэку доступны ручки:
 - `PATCH /ai-service/users/{userId}/reminders/{id}`
 - `POST /ai-service/users/{userId}/sponsor-suggestions`
 - `PATCH /ai-service/users/{userId}/sponsor-suggestions/{id}`
-
-Все `/ai-service/*` ручки требуют заголовок:
-
-```http
-Authorization: Bearer <AI_SERVICE_TOKEN>
-```
-
-В Swagger UI этот токен вводится через схему `serviceBearerAuth`.
+- `GET /ai-service/users/{userId}/sponsor-suggestions`
+- `DELETE /ai-service/users/{userId}/reset`
 
 Админские ручки каталога спонсоров доступны только пользователям с permission `sponsors.manage`:
 
@@ -76,15 +79,50 @@ PostgreSQL хранит структурированные сущности:
 - `SponsorProduct` - каталог спонсорских товаров: описание, реферальная ссылка, спонсор, категория, теги и metadata.
 - `SponsorOffer` - спонсорские предложения, связанные с событием или todo.
 - `SponsorSuggestion` - результат контекстного рекламного выбора AI для конкретного пользователя.
-- `CoupleLink` - техническая модель связи пары. На текущей публичной поверхности она не открыта пользователю.
+PostgreSQL также хранит контекст AI-сервиса:
 
-MongoDB хранит AI-профиль пользователя:
+- `AiServiceState` - профиль и нормализованные факты пользователя.
+- `AiServiceEvent`, `AiServiceTodo`, `AiServiceReminder` - действия и напоминания AI-бэка.
+- `AiServiceSponsorSuggestion`, `AiServiceChatMessage` - рекомендации и история сообщений.
+- `UserChatMessage` - история сообщений, отображаемая мобильному приложению.
 
-- `summary` - сжатое описание контекста пользователя.
-- `facts[]` - нормализованные факты.
-- `metadata` - дополнительный машинный контекст.
+Мобильное приложение не имеет прямых ручек для изменения AI-контекста.
 
-Мобильное приложение не имеет прямых ручек к MongoDB AI-профилю.
+### Контекст для AI-бэка
+
+`GET /ai-service/users/{userId}/context` формируется из двух источников:
+
+- значения, записанные AI через `profile` и `facts`;
+- явные ответы пользователя из onboarding и история пользовательского чата.
+
+Профиль партнёра из onboarding (`partner.basic`, `partner.hobbies`,
+`partner.likes`, `partner.dislikes`, `partner.notes`, `partner.completed`)
+возвращается одновременно как `profile.partner` и `facts.partner`.
+Это необходимо для текущего контракта AI-бэка: сценарий свидания читает весь
+context, а `ChatAgent` передаёт модели только поле `facts`.
+
+В `facts.recent_conversation` возвращаются последние 50 успешно доставленных
+сообщений чата с полями `role`, `message` и `timestamp`. Текущая реплика в
+статусе `pending` не включается, поскольку AI уже получает её полем `message`
+в запросе `POST /ml/chat`. В отличие от этого,
+`/ai-service/users/{userId}/chat_history` хранит сообщения, которые AI-бэк
+записывает для собственного анализа sentiment/отношений.
+
+Поток чата:
+
+1. Приложение вызывает `POST /chat/messages` с исходным пользовательским текстом.
+2. Backend сохраняет его в `UserChatMessage` и вызывает `POST /ml/chat` с
+   `user_id`, исходным `message` и `timestamp`.
+3. Реализация `ml_agent_system` при обработке чата вызывает
+   `GET /ai-service/users/{userId}/context`, но использует именно `facts`.
+4. AI-бэк записывает проанализированное пользовательское сообщение через
+   `POST /ai-service/users/{userId}/chat`.
+5. Backend берёт `reply` из HTTP-ответа `/ml/chat`, сохраняет его в
+   `UserChatMessage` как сообщение `assistant` и отправляет его клиенту через
+   WebSocket.
+
+Из этого следует, что сведения onboarding для чат-агента должны находиться в
+`facts.partner`; передача их только через `profile` недостаточна.
 
 ## Переменные окружения
 
@@ -92,17 +130,36 @@ MongoDB хранит AI-профиль пользователя:
 
 ```env
 DATABASE_URL=postgresql://admin:admin123@localhost:5432/db?schema=public
-MONGODB_URL=mongodb://admin:admin123@localhost:27017/db?authSource=admin
-MONGODB_DB_NAME=db
-MONGODB_USER_AI_PROFILES_COLLECTION=user_ai_profiles
+
+MINIO_ENDPOINT=localhost
+MINIO_PORT=9000
+MINIO_ACCESS_KEY=admin
+MINIO_SECRET_KEY=admin123
+MINIO_BUCKET=media
 
 JWT_SECRET=super-secret-dev-key-with-32-symbols
 JWT_REFRESH_SECRET=super-secret-refresh-dev-key-with-32-symbols
 
-AI_SERVICE_TOKEN=local-ai-service-token-change-me
+AI_BACKEND_BASE_URL=http://100.99.60.109:3001
+AI_BACKEND_TIMEOUT_MS=10000
 ```
 
 Полный пример находится в `.env.example`.
+
+### Локальный mock AI
+
+Для проверки чата без запущенного AI-бэка можно использовать локальный mock:
+
+```bash
+APP_BACKEND_BASE_URL=http://localhost:3000 npm run mock:ai
+```
+
+Backend должен использовать `AI_BACKEND_BASE_URL=http://localhost:3001`.
+Mock повторяет порядок `ChatAgent`: читает
+`/ai-service/users/{userId}/context`, сохраняет входное сообщение в служебную
+`/ai-service/users/{userId}/chat` и возвращает отличающийся ответ из
+`POST /ml/chat`. В ответе mock показывает имя и аллергию партнёра из
+`facts.partner`, а также число сообщений в `facts.recent_conversation`.
 
 ## Локальный запуск
 
@@ -112,7 +169,7 @@ AI_SERVICE_TOKEN=local-ai-service-token-change-me
 npm run docker
 ```
 
-Это поднимет PostgreSQL, MongoDB, MinIO и Adminer из [docker/docker-compose.dev.yml](docker/docker-compose.dev.yml).
+Это поднимет PostgreSQL, MinIO и Adminer из [docker/docker-compose.dev.yml](docker/docker-compose.dev.yml).
 
 
 ### Запуск на хосте
@@ -124,42 +181,34 @@ npm run docker
 docker pull node:22-bookworm-slim
 ```
 
-3. Для GPU, проверить драйвер командой `nvidia-smi`.
-4. Убедиться, что свободны порты `3000`, `5432`, `27017`, `8080`, `9000`, `9001`.
-5. Открыть `backend/.env` и проверить, что там стоят локальные dev-значения.
-6. Поднять инфраструктуру:
+3. Убедиться, что свободны порты `3000`, `5432`, `8080`, `9000`, `9001`.
+4. Создать `.env` на основе `.env.example` и проверить локальные dev-значения.
+5. Поднять инфраструктуру:
 
 ```powershell
 docker compose -f docker/docker-compose.dev.yml up -d
 ```
 
-7. Дождаться, пока запустятся PostgreSQL, MongoDB, MinIO и Adminer.
-8. Запустить backend:
+6. Дождаться, пока запустятся PostgreSQL, MinIO и Adminer.
+7. Запустить backend:
 
 ```powershell
 npm run dev
 ```
 
-9. Проверить, что backend жив:
+8. Проверить, что backend жив:
 
 ```powershell
-Invoke-RestMethod http://localhost:31000/health
+Invoke-RestMethod http://localhost:3000/health
 ```
 
-10. Если надо посмотреть базу вручную, открыть Adminer на `http://localhost:8080`.
-
-Требования для GPU:
-
-- На Linux должен быть установлен NVIDIA driver и `nvidia-container-toolkit`.
-- На Windows должен быть установлен NVIDIA driver с поддержкой WSL2, а Docker Desktop должен работать через WSL2 backend.
-- Для проверки GPU должен проходить тест `docker run --rm --gpus all nvidia/cuda:12.2.0-base-ubuntu22.04 nvidia-smi`.
+9. Если надо посмотреть базу вручную, открыть Adminer на `http://localhost:8080`.
 
 ### dev compose
 
 [docker/docker-compose.dev.yml](docker/docker-compose.dev.yml) для локальной разработки:
 
 - `postgres` - база данных PostgreSQL.
-- `mongo` - хранилище AI-профиля пользователя.
 - `minio` - объектное хранилище для файлов.
 - `adminer` - веб-интерфейс для просмотра PostgreSQL.
 
@@ -184,9 +233,7 @@ http://localhost:3000/docs
 
 ## Docker для production
 
-[docker/docker-compose.prod.yml](docker/docker-compose.prod.yml) поднимает backend-контейнер без монтирования исходников и подключает его к тем же зависимостям по именам сервисов: `postgres`, `mongo`, `minio`.
-
-GPU проброшен на уровне compose-файла через NVIDIA device reservation и переменные `NVIDIA_VISIBLE_DEVICES` / `NVIDIA_DRIVER_CAPABILITIES`.
+[docker/docker-compose.prod.yml](docker/docker-compose.prod.yml) поднимает backend-контейнер без монтирования исходников и подключает его к зависимостям по именам сервисов: `postgres`, `minio`.
 
 Команда запуска:
 
@@ -200,12 +247,10 @@ docker compose -f docker/docker-compose.prod.yml up --build -d
 docker ps
 docker compose -f docker/docker-compose.dev.yml ps
 docker compose -f docker/docker-compose.dev.yml logs -f
-docker logs mtuici-pr
-docker stop mtuici-pr
+docker logs mtuci-backend
+docker stop mtuci-backend
 docker compose -f docker/docker-compose.dev.yml down
 ```
-
-Важно: сейчас backend не содержит CUDA-кода. GPU-проброс сделан как инфраструктурная готовность.
 
 ## Генерация и проверки
 
@@ -230,11 +275,9 @@ npm run build
 ## Правила разработки API
 
 - Новые пользовательские ручки не должны давать пользователю возможность менять AI-память, события, todo, reminders или sponsor-предложения.
-- Если ручка меняет AI-контекст, она должна жить под `/ai-service/*` и использовать `@Security('serviceBearerAuth')`.
+- Ручки интеграции, изменяющие AI-контекст, должны жить под `/ai-service/*`.
 - Каталог спонсорских товаров не должен быть публичным. Управление каталогом требует `sponsors.manage`; AI получает только active товары через `/ai-service/sponsor-context`.
 - AI выбирает товар из sponsor context по `id` и создает `SponsorSuggestion` для пользователя. Мобильное приложение не выбирает рекламный товар само.
 - Если мобильному приложению нужно показать данные, добавляется read-only endpoint с `cookieAuth`.
 - Любые данные должны быть scoped by `userId`; AI-бэк передает `userId` явно в path.
 - Soft-delete используется для событий и todo, чтобы AI-контекст не терял историю.
-
-

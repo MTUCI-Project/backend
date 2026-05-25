@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type NextFunction, type Request, type Response } from 'express';
 import pinoHttp from 'pino-http';
 import type { IncomingHttpHeaders } from 'node:http';
 import 'reflect-metadata';
@@ -31,6 +31,31 @@ function serializeHeaders(headers: IncomingHttpHeaders) {
     }
 
     return headers;
+}
+
+function corsMiddleware(req: Request, res: Response, next: NextFunction) {
+    const origin = req.header('Origin');
+
+    if (origin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Vary', 'Origin');
+        res.setHeader(
+            'Access-Control-Allow-Methods',
+            'GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS'
+        );
+        res.setHeader(
+            'Access-Control-Allow-Headers',
+            'Authorization, Content-Type, X-Request-Id'
+        );
+        res.setHeader('Access-Control-Max-Age', '86400');
+    }
+
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(204);
+        return;
+    }
+
+    next();
 }
 
 export function createApp() {
@@ -75,6 +100,7 @@ export function createApp() {
         })
     );
 
+    app.use(corsMiddleware);
     app.use(express.json({ limit: '2mb' }));
     app.use(express.urlencoded({ extended: true }));
 

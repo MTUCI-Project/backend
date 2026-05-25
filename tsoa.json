@@ -15,10 +15,6 @@
                 "type": "apiKey",
                 "in": "cookie",
                 "name": "accessToken"
-            },
-            "serviceBearerAuth": {
-                "type": "http",
-                "scheme": "bearer"
             }
         }
     },

@@ -33,13 +33,6 @@ const EnvSchema = z.object({
 
     DATABASE_URL: z.string().min(1),
 
-    MONGODB_URL: z.string().min(1),
-    MONGODB_DB_NAME: z.string().min(1),
-    MONGODB_USER_AI_PROFILES_COLLECTION: z
-        .string()
-        .min(1)
-        .default('user_ai_profiles'),
-
     MINIO_ENDPOINT: z.string().min(1),
     MINIO_PORT: z.coerce.number().int().positive(),
     MINIO_USE_SSL: z.enum(['true', 'false']).default('false'),
@@ -52,10 +45,9 @@ const EnvSchema = z.object({
     JWT_EXPIRES_IN: z.coerce.number().int().positive().default(900),
     JWT_REFRESH_SECRET: z.string().min(32),
     JWT_REFRESH_EXPIRES_IN: z.coerce.number().int().positive().default(2592000),
-    AI_SERVICE_TOKEN: z
-        .string()
-        .min(16)
-        .default('development-ai-service-token-change-me'),
+
+    AI_BACKEND_BASE_URL: z.string().url().default('http://100.99.60.109:3001'),
+    AI_BACKEND_TIMEOUT_MS: z.coerce.number().int().positive().default(10_000),
 
     MAX_UPLOAD_BYTES: z.coerce.number().int().positive().default(104857600),
 

@@ -2,18 +2,20 @@ import { createApp } from './app';
 import { env } from './config/env';
 import { logger } from './config/logger';
 import { prisma } from './lib/prisma';
-import { disconnectMongo, ensureMongoConnection } from './lib/mongo';
 import { ensureBucket } from './lib/minio';
+import { attachChatWebSocketServer } from './domain/chat/chat.gateway';
 
 const app = createApp();
 
+app.disable('x-powered-by');
+
 async function start() {
     await ensureBucket();
-    await ensureMongoConnection();
 
     const server = app.listen(env.PORT, () => {
         logger.info({ port: env.PORT, env: env.NODE_ENV }, 'Server started');
     });
+    attachChatWebSocketServer(server);
 
     let shuttingDown = false;
 
@@ -34,15 +36,8 @@ async function start() {
                 logger.error({ err }, 'Failed to disconnect Prisma');
             }
 
-            try {
-                await disconnectMongo();
-                logger.info('MongoDB disconnected');
-            } catch (err) {
-                logger.error({ err }, 'Failed to disconnect MongoDB');
-            } finally {
-                // Give streams a moment to flush
-                setTimeout(() => process.exit(0), 50).unref();
-            }
+            // Give streams a moment to flush
+            setTimeout(() => process.exit(0), 50).unref();
         });
 
         // Hard exit fallback

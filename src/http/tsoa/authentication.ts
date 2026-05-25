@@ -1,7 +1,6 @@
 import type { Request } from 'express';
 import { verifyAccessToken } from '../../domain/auth/token.service';
 import { apiError } from '../errors/ApiError';
-import { env } from '../../config/env';
 import { prisma } from '../../lib/prisma';
 import { Scope } from '../../domain/auth/permissions';
 
@@ -13,13 +12,6 @@ function readAccessTokenFromCookie(req: Request): string | null {
 }
 
 function readBearerFallback(req: Request): string | null {
-    const header = req.headers.authorization;
-    if (!header?.startsWith('Bearer ')) return null;
-    const token = header.slice('Bearer '.length).trim();
-    return token || null;
-}
-
-function readBearerToken(req: Request): string | null {
     const header = req.headers.authorization;
     if (!header?.startsWith('Bearer ')) return null;
     const token = header.slice('Bearer '.length).trim();
@@ -80,20 +72,9 @@ export async function expressAuthentication(
     securityName: string,
     scopes?: string[],
 ): Promise<Principal | undefined> {
-    if (securityName === 'serviceBearerAuth') {
-        const token = readBearerToken(req);
-        if (!token) {
-            throw apiError(401, 'UNAUTHORIZED', 'Missing service token');
-        }
-        if (token !== env.AI_SERVICE_TOKEN) {
-            throw apiError(401, 'UNAUTHORIZED', 'Invalid service token');
-        }
-        return { id: 'ai-service' };
-    }
-
     const token =
         readAccessTokenFromCookie(req) ??
-        (env.NODE_ENV !== 'production' ? readBearerFallback(req) : null);
+        readBearerFallback(req);
 
     const { requiredPerms, forceLoad } = splitScopes(scopes);
     const needPerms = forceLoad || requiredPerms.length > 0;
